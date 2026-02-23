@@ -1,0 +1,84 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="DebugMS2025" />
+    <BuildType Name="DebugRevit2022" />
+    <BuildType Name="DebugRevit2023" />
+    <BuildType Name="DebugRevit2024" />
+    <BuildType Name="DebugRevit2025" />
+    <BuildType Name="DebugRevit2026" />
+    <BuildType Name="DebugStandalone" />
+    <BuildType Name="ReleaseMS2025" />
+    <BuildType Name="ReleaseRevit2022" />
+    <BuildType Name="ReleaseRevit2023" />
+    <BuildType Name="ReleaseRevit2024" />
+    <BuildType Name="ReleaseRevit2025" />
+    <BuildType Name="ReleaseRevit2026" />
+    <BuildType Name="ReleaseStandalone" />
+  </Configurations>
+  <Folder Name="/Common/">
+    <Project Path="IfcManager.BL/IfcManager.BL.csproj">
+      <BuildType Solution="DebugStandalone|*" Project="ReleaseRevit2022" />
+      <BuildType Solution="ReleaseStandalone|*" Project="DebugRevit2022" />
+    </Project>
+  </Folder>
+  <Folder Name="/Microstation/">
+    <Project Path="MicrostationIfcManager/MicrostationIfcManager.csproj">
+      <BuildType Solution="DebugMS2025|*" Project="DebugRevit2022" />
+      <BuildType Solution="DebugRevit2026|*" Project="DebugRevit2022" />
+      <BuildType Solution="DebugStandalone|*" Project="DebugRevit2022" />
+      <BuildType Solution="ReleaseRevit2022|*" Project="Release" />
+      <BuildType Solution="ReleaseRevit2023|*" Project="Release" />
+      <BuildType Solution="ReleaseRevit2024|*" Project="Release" />
+      <BuildType Solution="ReleaseRevit2025|*" Project="Release" />
+      <BuildType Solution="ReleaseRevit2026|*" Project="Release" />
+      <BuildType Solution="ReleaseStandalone|*" Project="Release" />
+      <Build Solution="DebugRevit2022|*" Project="false" />
+      <Build Solution="DebugRevit2023|*" Project="false" />
+      <Build Solution="DebugRevit2024|*" Project="false" />
+      <Build Solution="DebugRevit2025|*" Project="false" />
+      <Build Solution="DebugRevit2026|*" Project="false" />
+      <Build Solution="DebugStandalone|*" Project="false" />
+      <Build Solution="ReleaseRevit2022|*" Project="false" />
+      <Build Solution="ReleaseRevit2023|*" Project="false" />
+      <Build Solution="ReleaseRevit2024|*" Project="false" />
+      <Build Solution="ReleaseRevit2025|*" Project="false" />
+      <Build Solution="ReleaseRevit2026|*" Project="false" />
+      <Build Solution="ReleaseStandalone|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Revit/">
+    <Project Path="RevitIfcManager.RevitApp/RevitIfcManager.RevitApp.csproj">
+      <BuildType Solution="DebugMS2025|*" Project="ReleaseRevit2022" />
+      <BuildType Solution="DebugStandalone|*" Project="ReleaseRevit2022" />
+      <BuildType Solution="ReleaseMS2025|*" Project="DebugRevit2022" />
+      <BuildType Solution="ReleaseStandalone|*" Project="DebugRevit2022" />
+      <Build Solution="DebugMS2025|*" Project="false" />
+      <Build Solution="DebugStandalone|*" Project="false" />
+      <Build Solution="ReleaseMS2025|*" Project="false" />
+      <Build Solution="ReleaseStandalone|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Revit/Support/">
+    <Project Path="RevitIfcManager.Core/RevitIfcManager.Core.csproj">
+      <BuildType Solution="DebugMS2025|*" Project="DebugRevit2022" />
+      <BuildType Solution="DebugStandalone|*" Project="DebugRevit2022" />
+      <BuildType Solution="ReleaseMS2025|*" Project="ReleaseRevit2025" />
+      <BuildType Solution="ReleaseStandalone|*" Project="ReleaseRevit2022" />
+      <Build Solution="DebugMS2025|*" Project="false" />
+      <Build Solution="DebugStandalone|*" Project="false" />
+      <Build Solution="ReleaseMS2025|*" Project="false" />
+      <Build Solution="ReleaseStandalone|*" Project="false" />
+    </Project>
+    <Project Path="RevitIfcManager.UI/RevitIfcManager.UI.csproj">
+      <BuildType Solution="DebugMS2025|*" Project="ReleaseRevit2022" />
+      <BuildType Solution="DebugStandalone|*" Project="ReleaseRevit2022" />
+      <BuildType Solution="ReleaseMS2025|*" Project="DebugRevit2022" />
+      <BuildType Solution="ReleaseStandalone|*" Project="DebugRevit2022" />
+      <Build Solution="DebugMS2025|*" Project="false" />
+      <Build Solution="DebugStandalone|*" Project="false" />
+      <Build Solution="ReleaseMS2025|*" Project="false" />
+      <Build Solution="ReleaseStandalone|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Standalone/" />
+</Solution>

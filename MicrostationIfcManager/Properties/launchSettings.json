@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Microstation": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Bentley\\MicroStation 2025\\MicroStation\\microstation.exe",
+      "workingDirectory": "C:\\Program Files\\Bentley\\MicroStation 2025\\MicroStation\\"
+    }
+  }
+}
