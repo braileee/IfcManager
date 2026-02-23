@@ -1,0 +1,14 @@
+{
+  "ExcelSettings": {
+    "PropertySetNameColumn": "Property Set Name",
+    "PropertyNameColumn": "Property Name",
+    "DataTypeColumn": "Data Type",
+    "HeaderRowIndex": 0,
+    "PropertiesSheetName": "Properties",
+    "PicklistSheetName": "Picklist",
+    "MicrostationLayersMappingSheetName": "Microstation Layers Mapping",
+    "MicrostationLayerColumnName": "LayerName",
+    "PropertyMatchSheets": ["LocationRoot Match"],
+    "ExpressionsSheetName": "Expressions"
+  }
+}
