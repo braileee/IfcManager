@@ -81,12 +81,8 @@
     </Project>
   </Folder>
   <Folder Name="/Standalone/">
-    <Project Path="IfcValidatorStandalone/IfcValidatorStandalone.csproj" Id="97fde4a0-54a3-498d-af0e-fa2a7cd3c4ea">
+    <Project Path="IfcValidator/IfcValidator.csproj">
       <BuildType Solution="DebugMS2025|*" Project="Debug" />
-      <BuildType Solution="DebugRevit2022|*" Project="Debug" />
-      <BuildType Solution="DebugRevit2023|*" Project="Debug" />
-      <BuildType Solution="DebugRevit2024|*" Project="Debug" />
-      <BuildType Solution="DebugRevit2025|*" Project="Debug" />
       <BuildType Solution="DebugRevit2026|*" Project="Debug" />
       <BuildType Solution="DebugStandalone|*" Project="Debug" />
       <BuildType Solution="ReleaseMS2025|*" Project="Release" />
