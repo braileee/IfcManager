@@ -409,6 +409,9 @@ namespace IfcValidator.Models
         {
             List<IfcFile> missingPropertiesFilesData = new List<IfcFile>();
 
+            List<string> propertySetNames = propertySetItems.Select(item => item.PropertySetName).ToList();
+            List<string> propertyNames = propertySetItems.SelectMany(item => item.PropertyDefinitions).Select(item => item.PropertyName).ToList();
+
             foreach (IfcFile ifcFile in IfcFiles)
             {
                 IfcFile filteredIfcFile = new IfcFile
@@ -431,6 +434,11 @@ namespace IfcValidator.Models
                     bool isAnyPropertyMissed = false;
                     foreach (IfcProperty ifcProperty in ifcElement.IfcProperties)
                     {
+                        if (!propertySetNames.Contains(ifcProperty.PropertySetName) || !propertyNames.Contains(ifcProperty.PropertyName))
+                        {
+                            continue;
+                        }
+
                         PropertySetItem propertySetItem = PropertySetItems.FirstOrDefault(propertySetItem => propertySetItem.PropertySetName == ifcProperty.PropertySetName);
 
                         if (propertySetItem == null)

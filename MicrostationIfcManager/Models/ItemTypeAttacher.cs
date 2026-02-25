@@ -18,7 +18,7 @@ namespace MicrostationIfcManager.Models
 
         public ModelElementsCollection ModelElements { get; }
 
-        public void Attach(List<ItemType> itemTypes)
+        public void Attach(string libraryName, List<ItemType> itemTypes)
         {
             foreach (Element element in ModelElements)
             {
@@ -30,8 +30,12 @@ namespace MicrostationIfcManager.Models
                     Element newElement = element;
 
                     CustomItemHost customItemHost = new CustomItemHost(newElement, true);
-                    IDgnECInstance item = customItemHost.ApplyCustomItem(itemType);
-                    newElement.ReplaceInModel(element);
+
+                    if (customItemHost.GetCustomItem(libraryName, itemType.Name) == null)
+                    {
+                        IDgnECInstance item = customItemHost.ApplyCustomItem(itemType);
+                        newElement.ReplaceInModel(element);
+                    }
                 }
             }
         }

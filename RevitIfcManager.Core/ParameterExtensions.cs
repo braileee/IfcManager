@@ -12,9 +12,14 @@ namespace PSURevitApps.Core
         public static void TryParseAndSet(this Parameter parameter, string value)
         {
 
-            if (parameter == null || string.IsNullOrEmpty(value))
+            if (parameter == null)
             {
                 return;
+            }
+
+            if (value == null)
+            {
+                value = string.Empty;
             }
 
             switch (parameter.StorageType)
@@ -63,7 +68,7 @@ namespace PSURevitApps.Core
                 case StorageType.None:
                     break;
                 case StorageType.Integer:
-                   return parameter.AsInteger();
+                    return parameter.AsInteger();
                 case StorageType.Double:
                     return parameter.AsDouble();
                 case StorageType.String:

@@ -67,6 +67,7 @@ namespace MicrostationIfcManager
                 LoadPickLists(dgnFile);
 
                 // Generate item types aka custom properties
+                string libraryName = nameof(MicrostationIfcManager);
                 ItemTypeCreator itemTypeCreator = new ItemTypeCreator(dgnFile, nameof(MicrostationIfcManager), PropertySetItems, PickLists);
                 List<ItemType> itemTypes = itemTypeCreator.Create();
 
@@ -75,7 +76,7 @@ namespace MicrostationIfcManager
 
                 //Attach item types to elements
                 ItemTypeAttacher itemTypeAttacher = new ItemTypeAttacher(elements);
-                itemTypeAttacher.Attach(itemTypes);
+                itemTypeAttacher.Attach(libraryName, itemTypes);
 
                 // Map properties
                 LayerPropertyMapper layerPropertyMapper = new LayerPropertyMapper(dgnFile, PropertySetItems, LayerMappingItems, elements);
