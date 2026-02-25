@@ -31,7 +31,7 @@ namespace MicrostationIfcManager.Models
 
         public void Map()
         {
-            List<string> propertyNames = PropertySetItems.SelectMany(item => item.PropertyDefinitions).Select(item => item.PropertyName).ToList();
+            List<string> propertyNames = PropertySetItems.SelectMany(item => item.PropertyItems).Select(item => item.PropertyName).ToList();
 
             foreach (Element element in Elements)
             {

@@ -21,7 +21,7 @@ namespace MicrostationIfcManager.ViewModels
         public ParametersTagElementsViewModel(DgnFile dgnFile, SettingsRoot settingsRoot, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<LayerMappingItem> layerMappingItems, List<ExpressionItem> expressionItems, List<PropertyValueMatch> propertyValueMatches, List<Element> selectedElements, List<ComposedPropertyItem> composedPropertyItems, List<PropertyValueMatch> propertyValueExactMatches)
         {
 
-            CustomProperties = propertySetItems.SelectMany(item => item.PropertyDefinitions).ToList();
+            CustomProperties = propertySetItems.SelectMany(item => item.PropertyItems).ToList();
             Dictionary<string, List<string>> propertiesWithValues = picklistGroups.ToDictionary(item => item.GroupName, item => item.Values);
 
             PropertiesWithValues = propertiesWithValues;

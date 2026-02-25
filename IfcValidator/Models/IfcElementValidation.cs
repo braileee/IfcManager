@@ -10,7 +10,7 @@ namespace IfcValidator.Models
 
         public List<string> GetMissingPropertyNames(List<PropertySetItem> propertySetItems)
         {
-            List<string> requiredParameterNames = propertySetItems.SelectMany(p => p.PropertyDefinitions).Select(item => item.PropertyName).ToList();
+            List<string> requiredParameterNames = propertySetItems.SelectMany(p => p.PropertyItems).Select(item => item.PropertyName).ToList();
             List<string> existingParametersNames = IfcElement.IfcProperties.Select(p => p.PropertyName).ToList();
             List<string> missingParameterNames = requiredParameterNames.Except(existingParametersNames).ToList();
             
@@ -19,7 +19,7 @@ namespace IfcValidator.Models
 
         public List<string> GetPropertyNamesWithMissingValues(List<PropertySetItem> propertySetItems)
         {
-            List<string> requiredParameterNames = propertySetItems.SelectMany(p => p.PropertyDefinitions).Select(item => item.PropertyName).ToList();
+            List<string> requiredParameterNames = propertySetItems.SelectMany(p => p.PropertyItems).Select(item => item.PropertyName).ToList();
             List<string> existingParametersNamesWithMissingValues = IfcElement.IfcProperties.Where(p => requiredParameterNames.Contains(p.PropertyName) && string.IsNullOrEmpty(p.Value?.ToString())).Select(p => p.PropertyName).ToList();
             return existingParametersNamesWithMissingValues;
         }

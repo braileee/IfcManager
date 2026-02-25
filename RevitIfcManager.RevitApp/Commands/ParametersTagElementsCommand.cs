@@ -41,7 +41,7 @@ namespace RevitIfcManager.RevitApp.Commands
 
                 Dictionary<string, List<string>> propertiesWithValues = picklistGroups.ToDictionary(item => item.GroupName, item => item.Values);
 
-                List<PropertyItem> properties = propertySetItems.SelectMany(item => item.PropertyDefinitions).ToList();
+                List<PropertyItem> properties = propertySetItems.SelectMany(item => item.PropertyItems).ToList();
 
                 DockablePaneId id = new DockablePaneId(new Guid(Constants.ParametersTagElementsPaneId));
                 DockablePane dockableWindow = commandData.Application.GetDockablePane(id);

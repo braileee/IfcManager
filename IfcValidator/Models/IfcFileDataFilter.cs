@@ -1,5 +1,6 @@
 ﻿using IfcManager.BL.Enums;
 using IfcManager.BL.Models;
+using NPOI.HPSF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace IfcValidator.Models
                             continue;
                         }
 
-                        PropertyItem propertyItem = propertySetItem.PropertyDefinitions.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
+                        PropertyItem propertyItem = propertySetItem.PropertyItems.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
 
                         if (propertyItem == null)
                         {
@@ -107,7 +108,7 @@ namespace IfcValidator.Models
                             continue;
                         }
 
-                        PropertyItem propertyItem = propertySetItem.PropertyDefinitions.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
+                        PropertyItem propertyItem = propertySetItem.PropertyItems.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
 
                         if (propertyItem == null)
                         {
@@ -171,7 +172,7 @@ namespace IfcValidator.Models
                             continue;
                         }
 
-                        PropertyItem propertyItem = propertySetItem.PropertyDefinitions.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
+                        PropertyItem propertyItem = propertySetItem.PropertyItems.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
 
                         if (propertyItem == null)
                         {
@@ -249,7 +250,7 @@ namespace IfcValidator.Models
                             continue;
                         }
 
-                        PropertyItem propertyItem = propertySetItem.PropertyDefinitions.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
+                        PropertyItem propertyItem = propertySetItem.PropertyItems.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
 
                         if (propertyItem == null)
                         {
@@ -409,8 +410,8 @@ namespace IfcValidator.Models
         {
             List<IfcFile> missingPropertiesFilesData = new List<IfcFile>();
 
-            List<string> propertySetNames = propertySetItems.Select(item => item.PropertySetName).ToList();
-            List<string> propertyNames = propertySetItems.SelectMany(item => item.PropertyDefinitions).Select(item => item.PropertyName).ToList();
+            List<string> requiredPropertySetNames = propertySetItems.Select(item => item.PropertySetName).ToList();
+            List<string> requiredPropertyNames = propertySetItems.SelectMany(item => item.PropertyItems).Select(item => item.PropertyName).ToList();
 
             foreach (IfcFile ifcFile in IfcFiles)
             {
@@ -422,6 +423,8 @@ namespace IfcValidator.Models
 
                 foreach (IfcElement ifcElement in ifcFile.IfcElements)
                 {
+                    string guid = ifcElement.Guid.ToString();
+
                     IfcElement ifcElementUpdated = new IfcElement
                     {
                         Guid = ifcElement.Guid,
@@ -431,43 +434,80 @@ namespace IfcValidator.Models
                         Tag = ifcElement.Tag
                     };
 
-                    bool isAnyPropertyMissed = false;
-                    foreach (IfcProperty ifcProperty in ifcElement.IfcProperties)
+
+                    foreach (PropertySetItem propertySetItem in propertySetItems)
                     {
-                        if (!propertySetNames.Contains(ifcProperty.PropertySetName) || !propertyNames.Contains(ifcProperty.PropertyName))
+                        foreach (PropertyItem propertyItem in propertySetItem.PropertyItems)
                         {
-                            continue;
-                        }
-
-                        PropertySetItem propertySetItem = PropertySetItems.FirstOrDefault(propertySetItem => propertySetItem.PropertySetName == ifcProperty.PropertySetName);
-
-                        if (propertySetItem == null)
-                        {
-                            ifcElementUpdated.IfcProperties.Add(new IfcProperty { PropertySetName = propertySetItem.PropertySetName });
-                            isAnyPropertyMissed = true;
-                            continue;
-                        }
-
-                        PropertyItem propertyItem = propertySetItem.PropertyDefinitions.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
-
-                        if (propertyItem == null)
-                        {
-                            ifcElementUpdated.IfcProperties.Add(ifcProperty);
-                            isAnyPropertyMissed = true;
-                            continue;
+                            if (!ifcElement.IfcProperties.Any(ifcProperty => ifcProperty.PropertySetName == propertySetItem.PropertySetName && ifcProperty.PropertyName == propertyItem.PropertyName))
+                            {
+                                IfcProperty emptyProperty = new IfcProperty() { PropertySetName = propertySetItem.PropertySetName, PropertyName = propertyItem.PropertyName };
+                                ifcElementUpdated.IfcProperties.Add(emptyProperty);
+                            }
                         }
                     }
 
-                    if (isAnyPropertyMissed)
-                    {
-                        filteredIfcFile.IfcElements.Add(ifcElementUpdated);
-                    }
+                    filteredIfcFile.IfcElements.Add(ifcElementUpdated);
                 }
 
                 missingPropertiesFilesData.Add(filteredIfcFile);
             }
 
             return missingPropertiesFilesData;
+        }
+
+        public List<IfcFile> GetWrongComposedData(List<IfcFile> ifcFiles, List<ComposedPropertyItem> composedPropertyItems)
+        {
+            List<IfcFile> ifcFilesWithWrongData = new List<IfcFile>();
+
+            foreach (IfcFile ifcFile in ifcFiles)
+            {
+                IfcFile ifcFileWithWrongData = new IfcFile
+                {
+                    FilePath = ifcFile.FilePath,
+                    IfcElements = new List<IfcElement>(),
+                };
+
+
+                foreach (IfcElement ifcElement in ifcFile.IfcElements)
+                {
+                    IfcElement ifcElementWithWrongData = new IfcElement
+                    {
+                        Guid = ifcElement.Guid,
+                        IfcEntity = ifcElement.IfcEntity,
+                        Layer = ifcElement.Layer,
+                        Tag = ifcElement.Tag,
+                        IfcProperties = new List<IfcProperty>(),
+                    };
+
+                    foreach (ComposedPropertyItem composedPropertyItem in composedPropertyItems)
+                    {
+                        List<string> sourceParameterNames = ComposedItemEvaluator.GetPropertyNames(composedPropertyItem.Formula);
+                        string targetParameterName = composedPropertyItem.ComposedPropertyName;
+
+                        IfcProperty targetProperty = ifcElement.IfcProperties.FirstOrDefault(item => item.PropertyName == targetParameterName);
+
+                        if (targetProperty == null)
+                        {
+                            continue;
+                        }
+
+                        List<IfcProperty> sourceProperties = ifcElement.IfcProperties.Where(item => sourceParameterNames.Contains(item.PropertyName)).ToList();
+
+                        string composedValue = ComposedItemEvaluator.Resolve(composedPropertyItem, sourceProperties.ToDictionary(item => item.PropertyName, item => item.Value?.ToString()));
+
+                        if (targetProperty.Value?.ToString() != composedValue)
+                        {
+                            if (!ifcElementWithWrongData.IfcProperties.Any(property => property.PropertySetName == targetProperty.PropertySetName && property.PropertyName == targetProperty.PropertyName))
+                            {
+                                ifcElementWithWrongData.IfcProperties.Add(targetProperty);
+                            }
+                        }
+                    }
+
+                    ifcFileWithWrongData.IfcElements.Add(ifcElementWithWrongData);
+                }
+            }
         }
     }
 }

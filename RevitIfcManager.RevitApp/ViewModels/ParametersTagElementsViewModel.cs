@@ -50,7 +50,7 @@ namespace RevitIfcManager.ViewModels
             ComposedItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings);
             PropertyValueExactMatches = ExcelDataLoader.LoadPropertiesExactValueMatches(excelFilePath, settingsRoot.ExcelSettings);
 
-            CustomProperties = propertySetItems.SelectMany(item => item.PropertyDefinitions).ToList();
+            CustomProperties = propertySetItems.SelectMany(item => item.PropertyItems).ToList();
             Dictionary<string, List<string>> propertiesWithValues = picklistGroups.ToDictionary(item => item.GroupName, item => item.Values);
 
             PropertiesWithValues = propertiesWithValues;
@@ -197,6 +197,11 @@ namespace RevitIfcManager.ViewModels
             }
 
             string variesValue = "***VARIES***";
+
+            if(Uiapp.ActiveUIDocument == null)
+            {
+                return;
+            }
 
             var selectedIds = Uiapp.ActiveUIDocument.Selection.GetElementIds();
 

@@ -33,7 +33,7 @@ namespace RevitIfcManager.Models
             using var tx = new Transaction(doc, "Create Project Parameters");
             tx.Start();
 
-            List<PropertyItem> properties = propertySets.SelectMany(ps => ps.PropertyDefinitions).ToList();
+            List<PropertyItem> properties = propertySets.SelectMany(ps => ps.PropertyItems).ToList();
 
             foreach (var prop in properties)
             {

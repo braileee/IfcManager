@@ -69,6 +69,7 @@ namespace IfcValidator.ViewModels
                 List<PropertyValueMatch> propertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings);
                 List<ExpressionItem> expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings);
                 List<LayerMappingItem> layerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, settingsRoot.ExcelSettings, "LayerName");
+                List<ComposedPropertyItem> composedPropertyItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings);
 
                 List<string> ifcFilePaths = System.IO.Directory.GetFiles(IfcFolderPath, "*.ifc", System.IO.SearchOption.TopDirectoryOnly).ToList();
 
@@ -82,7 +83,7 @@ namespace IfcValidator.ViewModels
                 IfcFileDataCollector collector = new IfcFileDataCollector(ifcFilePaths);
                 List<IfcFile> ifcFiles = collector.CollectFromFiles();
 
-                ReportWriter reportWriter = new ReportWriter(ifcFiles, reportFilePath, propertySetItems, picklistGroups, propertyValueMatches, expressions, layerMappingItems);
+                ReportWriter reportWriter = new ReportWriter(ifcFiles, reportFilePath, propertySetItems, picklistGroups, propertyValueMatches, expressions, layerMappingItems, composedPropertyItems);
                 reportWriter.Create();
 
                 System.Diagnostics.Process.Start(

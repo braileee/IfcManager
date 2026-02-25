@@ -43,7 +43,7 @@ namespace MicrostationIfcManager.Models
                 itemTypes.Add(itemType);
 
                 // 3. Properties
-                foreach (var property in propertySetItem.PropertyDefinitions)
+                foreach (var property in propertySetItem.PropertyItems)
                 {
                     var typeKind = TypeKindMapper.Get(property.DataType);
                     CustomProperty customProperty = AddProperty(itemType, property.PropertyName, typeKind);

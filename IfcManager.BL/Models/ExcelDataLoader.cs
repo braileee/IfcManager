@@ -64,7 +64,7 @@ namespace IfcManager.BL.Models
             var propertySets = rows.GroupBy(r => r.PropertySetName).Select(g => new PropertySetItem
             {
                 PropertySetName = g.Key,
-                PropertyDefinitions = g
+                PropertyItems = g
                                         .Select(r => new PropertyItem
                                         {
                                             PropertyName = r.PropertyName,

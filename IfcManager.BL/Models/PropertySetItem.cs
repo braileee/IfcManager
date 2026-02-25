@@ -9,6 +9,6 @@ namespace IfcManager.BL.Models
     public class PropertySetItem
     {
         public string PropertySetName { get; set; }
-        public List<PropertyItem> PropertyDefinitions { get; set; } = new List<PropertyItem>();
+        public List<PropertyItem> PropertyItems { get; set; } = new List<PropertyItem>();
     }
 }

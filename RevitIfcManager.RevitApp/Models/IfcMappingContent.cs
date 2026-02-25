@@ -25,7 +25,7 @@ namespace RevitIfcManager.Models
             {
                 stringBuilder.AppendLine($"PropertySet:{tab}{customPropertySet.PropertySetName}{tab}{instanceKind}{tab}{ifcTypesJoined}");
 
-                foreach (var property in customPropertySet.PropertyDefinitions)
+                foreach (var property in customPropertySet.PropertyItems)
                 {
                     string type = IfcMappingDataType.Get(property.DataType);
                     stringBuilder.AppendLine($"{property.PropertyName}{tab}{type}{tab}{property.PropertyName}");

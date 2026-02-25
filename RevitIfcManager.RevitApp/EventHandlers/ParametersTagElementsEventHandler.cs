@@ -50,42 +50,31 @@ namespace RevitIfcManager.EventHandlers
         {
             foreach (PropertyField changedField in options.ChangedFields)
             {
-                foreach (var composedItem in options.ComposedItems)
+                foreach (ComposedPropertyItem composedItem in options.ComposedItems)
                 {
-                    List<string> propertyNamesToCompose = ComposedItemEvaluator.GetPropertyNames(composedItem.Formula);
+                    ComposerPropertyResult result = ComposedItemEvaluator.GetComposedValue(changedField, options.Fields.ToList(), composedItem);
 
-                    if (!propertyNamesToCompose.Contains(changedField.Name))
+                    if (!result.CanBeComposed)
                     {
                         continue;
                     }
 
-                    PropertyField composingField = options.Fields.FirstOrDefault(item => item.Name == composedItem.ComposedPropertyName);
-
-                    if(composingField == null)
-                    {
-                        continue;
-                    }
-
-                    List<PropertyField> fieldsToCompose = options.Fields.Where(item => propertyNamesToCompose.Contains(item.Name)).ToList();
-
-                    Dictionary<string, string> propertyAndValuesToCompose = fieldsToCompose.ToDictionary(item => item.Name, item => item?.Value?.ToString());
-
-                    string value = ComposedItemEvaluator.Resolve(composedItem.Formula, propertyAndValuesToCompose);
-
-                    composingField.Value = value;
+                    result.ComposingField.Value = result.Value;
 
                     foreach (Element element in options.Elements)
                     {
-                        Parameter parameter = element.LookupParameter(composingField.Name);
+                        Parameter parameter = element.LookupParameter(result.ComposingField.Name);
 
                         if (parameter != null)
                         {
-                            parameter.TryParseAndSet(value);
+                            parameter.TryParseAndSet(result.Value);
                         }
                     }
                 }
             }
         }
+
+
 
         private void ApplyExactMatches(ParametersTagElementsOptions options)
         {

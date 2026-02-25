@@ -13,7 +13,7 @@ namespace IfcValidator.Models
 {
     public class ReportWriter
     {
-        public ReportWriter(List<IfcFile> ifcFiles, string reportFilePath, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<PropertyValueMatch> propertyValueMatches, List<ExpressionItem> expressions, List<LayerMappingItem> layerMappingItems)
+        public ReportWriter(List<IfcFile> ifcFiles, string reportFilePath, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<PropertyValueMatch> propertyValueMatches, List<ExpressionItem> expressions, List<LayerMappingItem> layerMappingItems, List<ComposedPropertyItem> composedPropertyItems)
         {
             IfcFiles = ifcFiles;
             ReportFilePath = reportFilePath;
@@ -22,6 +22,7 @@ namespace IfcValidator.Models
             PropertyValueMatches = propertyValueMatches;
             Expressions = expressions;
             LayerMappingItems = layerMappingItems;
+            ComposedPropertyItems = composedPropertyItems;
         }
 
         public List<IfcFile> IfcFiles { get; } = new List<IfcFile>();
@@ -31,6 +32,7 @@ namespace IfcValidator.Models
         public List<PropertyValueMatch> PropertyValueMatches { get; } = new List<PropertyValueMatch>();
         public List<ExpressionItem> Expressions { get; } = new List<ExpressionItem>();
         public List<LayerMappingItem> LayerMappingItems { get; }
+        public List<ComposedPropertyItem> ComposedPropertyItems { get; }
 
         public void Create()
         {
@@ -55,6 +57,7 @@ namespace IfcValidator.Models
             List<IfcFile> ifcFileNonMatchList = ifcFileDataFilter.GetNonMatchData(filteredIfcFiles, PropertyValueMatches);
             List<IfcFile> ifcFileExpressions = ifcFileDataFilter.GetWrongExpressions(filteredIfcFiles, Expressions);
             List<IfcFile> wrongMappings = ifcFileDataFilter.GetWrongLayerMappings(filteredIfcFiles, LayerMappingItems);
+            List<IfcFile> wrongComposedData = ifcFileDataFilter.GetWrongComposedData(filteredIfcFiles, ComposedPropertyItems);
 
             IWorkbook workbook = new XSSFWorkbook();
 
