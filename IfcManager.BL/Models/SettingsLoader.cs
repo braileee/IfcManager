@@ -21,7 +21,7 @@ namespace IfcManager.BL.Models
 
         public static SettingsRoot LoadExistingOrDefault()
         {
-            string defaultSettingsPath = GetSettingsFilePath();
+            string defaultSettingsPath = GetDefaultSettingsFilePath();
             string currentSettingsPath = Properties.Settings.Default.SettingsFilePath;
 
             if (string.IsNullOrEmpty(currentSettingsPath) || !File.Exists(currentSettingsPath))
@@ -49,7 +49,7 @@ namespace IfcManager.BL.Models
         }
 
 
-        public static string GetSettingsFilePath()
+        public static string GetDefaultSettingsFilePath()
         {
             string assemblyFolder = AssemblyUtils.GetFolder(typeof(SettingsLoader));
             string defaultSettingsPath = Path.Combine(assemblyFolder, Constants.FilesFolder, Constants.IfcManagerFolder, Constants.JsonSettingsFileName);

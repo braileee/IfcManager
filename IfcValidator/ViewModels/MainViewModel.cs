@@ -1,5 +1,6 @@
 ﻿using ControlzEx.Standard;
-using IfcValidator.Json;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
 using IfcValidator.Models;
 using IfcValidator.Utils;
 using Prism.Commands;
@@ -19,12 +20,12 @@ namespace IfcValidator.ViewModels
     {
         public MainViewModel()
         {
-            ExcelDataLoader.LoadDefaultOrExisting();
+            ExcelDataLoader.LoadOrPromptExcelFilePath();
             SettingsLoader.LoadExistingOrDefault();
 
-            ExcelFilePath = Properties.Settings.Default.ExcelFilePath;
+            ExcelFilePath = ExcelDataLoader.GetPath();
             IfcFolderPath = Properties.Settings.Default.IfcFolderPath;
-            SettingsFilePath = Properties.Settings.Default.SettingsFilePath;
+            SettingsFilePath = SettingsLoader.GetPath();
 
             SelectExcelCommand = new DelegateCommand(OnSelectExcelCommand);
             SelectIfcFolderCommand = new DelegateCommand(OnSelectIfcFolderCommand);

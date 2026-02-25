@@ -118,7 +118,7 @@ namespace MicrostationIfcManager
                 }
 
                 PropertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, SettingsRoot.ExcelSettings);
-                PicklistGroups = ExcelDataLoader.ReadAllGroups(excelFilePath, SettingsRoot.ExcelSettings);
+                PicklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, SettingsRoot.ExcelSettings);
                 LayerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, SettingsRoot.ExcelSettings, "LayerName");
                 ExpressionItems = ExcelDataLoader.LoadExpressions(excelFilePath, SettingsRoot.ExcelSettings);
                 PropertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, SettingsRoot.ExcelSettings);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using IfcManager.BL.Models;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace IfcValidator.Models

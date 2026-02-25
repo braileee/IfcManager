@@ -78,7 +78,7 @@ namespace IfcManager.BL.Models
 
         }
 
-        public static List<PicklistGroup> ReadAllGroups(string filePath, ExcelSettings settings)
+        public static List<PicklistGroup> LoadPicklistGroups(string filePath, ExcelSettings settings)
         {
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
@@ -426,6 +426,11 @@ namespace IfcManager.BL.Models
         {
             Properties.Settings.Default.ExcelFilePath = path;
             Properties.Settings.Default.Save();
+        }
+
+        public static string GetPath()
+        {
+            return Properties.Settings.Default.ExcelFilePath;
         }
     }
 }

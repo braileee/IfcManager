@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IfcManager.BL.Enums;
+using IfcManager.BL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -326,9 +328,10 @@ namespace IfcValidator.Models
 
                             string targetValue = targetProperty?.Value?.ToString();
 
-                            string evaluatedValue = ExpressionEvaluator.Evaluate(Enums.ExpressionFunctionType.DelimetedByDotFirstPart, assignedSourceValue);
+                            object evaluatedValue = ExpressionEvaluator.Evaluate(expression, sourceProperty?.Value);
+                            string evaluatedValueString = evaluatedValue?.ToString();
 
-                            if (targetValue != evaluatedValue)
+                            if (targetValue != evaluatedValueString)
                             {
                                 ifcElementUpdated.IfcProperties.Add(sourceProperty);
                                 ifcElementUpdated.IfcProperties.Add(targetProperty);
@@ -384,7 +387,7 @@ namespace IfcValidator.Models
                     {
                         IfcProperty targetProperty = ifcElement.IfcProperties.FirstOrDefault(item => item.PropertyName == keyValuePair.Key);
 
-                        if(targetProperty == null)
+                        if (targetProperty == null)
                         {
                             continue;
                         }
@@ -400,6 +403,63 @@ namespace IfcValidator.Models
             }
 
             return updatedFiles;
+        }
+
+        public List<IfcFile> GetMissingPropertiesData(List<IfcFile> ifcFiles, List<PropertySetItem> propertySetItems)
+        {
+            List<IfcFile> missingPropertiesFilesData = new List<IfcFile>();
+
+            foreach (IfcFile ifcFile in IfcFiles)
+            {
+                IfcFile filteredIfcFile = new IfcFile
+                {
+                    FilePath = ifcFile.FilePath,
+                    IfcElements = new List<IfcElement>()
+                };
+
+                foreach (IfcElement ifcElement in ifcFile.IfcElements)
+                {
+                    IfcElement ifcElementUpdated = new IfcElement
+                    {
+                        Guid = ifcElement.Guid,
+                        IfcEntity = ifcElement.IfcEntity,
+                        IfcProperties = new List<IfcProperty>(),
+                        Layer = ifcElement.Layer,
+                        Tag = ifcElement.Tag
+                    };
+
+                    bool isAnyPropertyMissed = false;
+                    foreach (IfcProperty ifcProperty in ifcElement.IfcProperties)
+                    {
+                        PropertySetItem propertySetItem = PropertySetItems.FirstOrDefault(propertySetItem => propertySetItem.PropertySetName == ifcProperty.PropertySetName);
+
+                        if (propertySetItem == null)
+                        {
+                            ifcElementUpdated.IfcProperties.Add(new IfcProperty { PropertySetName = propertySetItem.PropertySetName });
+                            isAnyPropertyMissed = true;
+                            continue;
+                        }
+
+                        PropertyItem propertyItem = propertySetItem.PropertyDefinitions.FirstOrDefault(item => item.PropertyName == ifcProperty.PropertyName);
+
+                        if (propertyItem == null)
+                        {
+                            ifcElementUpdated.IfcProperties.Add(ifcProperty);
+                            isAnyPropertyMissed = true;
+                            continue;
+                        }
+                    }
+
+                    if (isAnyPropertyMissed)
+                    {
+                        filteredIfcFile.IfcElements.Add(ifcElementUpdated);
+                    }
+                }
+
+                missingPropertiesFilesData.Add(filteredIfcFile);
+            }
+
+            return missingPropertiesFilesData;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using NPOI.SS.UserModel;
+﻿using IfcManager.BL.Models;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
@@ -44,9 +45,13 @@ namespace IfcValidator.Models
             }
 
             IfcFileDataFilter ifcFileDataFilter = new IfcFileDataFilter(IfcFiles, PropertySetItems, PicklistGroups);
+
+            List<IfcFile> ifcFilesMissingProperties = ifcFileDataFilter.GetMissingPropertiesData(IfcFiles, PropertySetItems);
+
             List<IfcFile> filteredIfcFiles = ifcFileDataFilter.GetPerPropertySetItems();
             List<IfcFile> ifcFileWithEmptyValues = ifcFileDataFilter.GetWithEmptyValues(filteredIfcFiles);
             List<IfcFile> ifcFilesPicklistCheck = ifcFileDataFilter.GetPicklistCheck(filteredIfcFiles, PicklistGroups);
+
             List<IfcFile> ifcFileNonMatchList = ifcFileDataFilter.GetNonMatchData(filteredIfcFiles, PropertyValueMatches);
             List<IfcFile> ifcFileExpressions = ifcFileDataFilter.GetWrongExpressions(filteredIfcFiles, Expressions);
             List<IfcFile> wrongMappings = ifcFileDataFilter.GetWrongLayerMappings(filteredIfcFiles, LayerMappingItems);
@@ -65,6 +70,9 @@ namespace IfcValidator.Models
 
             ISheet allPropertiesSheet = workbook.CreateSheet("All Properties");
             WriteAllData(allPropertiesSheet, mainHeaders, IfcFiles);
+
+            ISheet missedPropertiesSheet = workbook.CreateSheet("Missed properties");
+            WriteAllData(missedPropertiesSheet, mainHeaders, ifcFilesMissingProperties);
 
             ISheet filteredPropertiesSheet = workbook.CreateSheet("Filtered Properties");
             WriteAllData(filteredPropertiesSheet, mainHeaders, filteredIfcFiles);

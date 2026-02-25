@@ -37,7 +37,7 @@ namespace RevitIfcManager.RevitApp.Commands
                 }
 
                 List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings);
-                List<PicklistGroup> picklistGroups = ExcelDataLoader.ReadAllGroups(excelFilePath, settingsRoot.ExcelSettings);
+                List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings);
 
                 Dictionary<string, List<string>> propertiesWithValues = picklistGroups.ToDictionary(item => item.GroupName, item => item.Values);
 

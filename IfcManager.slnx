@@ -35,8 +35,18 @@
       <BuildType Solution="ReleaseRevit2025|*" Project="DebugMS2025" />
       <BuildType Solution="ReleaseRevit2026|*" Project="DebugMS2025" />
       <BuildType Solution="ReleaseStandalone|*" Project="DebugMS2025" />
+      <Build Solution="DebugRevit2022|*" Project="false" />
+      <Build Solution="DebugRevit2023|*" Project="false" />
+      <Build Solution="DebugRevit2024|*" Project="false" />
       <Build Solution="DebugRevit2025|*" Project="false" />
       <Build Solution="DebugRevit2026|*" Project="false" />
+      <Build Solution="DebugStandalone|*" Project="false" />
+      <Build Solution="ReleaseRevit2022|*" Project="false" />
+      <Build Solution="ReleaseRevit2023|*" Project="false" />
+      <Build Solution="ReleaseRevit2024|*" Project="false" />
+      <Build Solution="ReleaseRevit2025|*" Project="false" />
+      <Build Solution="ReleaseRevit2026|*" Project="false" />
+      <Build Solution="ReleaseStandalone|*" Project="false" />
     </Project>
   </Folder>
   <Folder Name="/Revit/">
@@ -75,19 +85,28 @@
   </Folder>
   <Folder Name="/Standalone/">
     <Project Path="IfcValidator/IfcValidator.csproj">
-      <BuildType Solution="DebugMS2025|*" Project="Debug" />
-      <BuildType Solution="DebugRevit2026|*" Project="Debug" />
-      <BuildType Solution="DebugStandalone|*" Project="Debug" />
-      <BuildType Solution="ReleaseMS2025|*" Project="Release" />
-      <BuildType Solution="ReleaseRevit2022|*" Project="Release" />
-      <BuildType Solution="ReleaseRevit2023|*" Project="Release" />
-      <BuildType Solution="ReleaseRevit2024|*" Project="Release" />
-      <BuildType Solution="ReleaseRevit2025|*" Project="Release" />
-      <BuildType Solution="ReleaseRevit2026|*" Project="Release" />
-      <BuildType Solution="ReleaseStandalone|*" Project="Release" />
+      <BuildType Solution="DebugMS2025|*" Project="ReleaseStandalone" />
+      <BuildType Solution="DebugRevit2022|*" Project="ReleaseStandalone" />
+      <BuildType Solution="DebugRevit2023|*" Project="ReleaseStandalone" />
+      <BuildType Solution="DebugRevit2024|*" Project="ReleaseStandalone" />
+      <BuildType Solution="DebugRevit2025|*" Project="ReleaseStandalone" />
+      <BuildType Solution="DebugRevit2026|*" Project="ReleaseStandalone" />
+      <BuildType Solution="ReleaseMS2025|*" Project="DebugStandalone" />
+      <BuildType Solution="ReleaseRevit2022|*" Project="DebugStandalone" />
+      <BuildType Solution="ReleaseRevit2023|*" Project="DebugStandalone" />
+      <BuildType Solution="ReleaseRevit2024|*" Project="DebugStandalone" />
+      <BuildType Solution="ReleaseRevit2025|*" Project="DebugStandalone" />
+      <BuildType Solution="ReleaseRevit2026|*" Project="DebugStandalone" />
       <Build Solution="DebugMS2025|*" Project="false" />
+      <Build Solution="DebugRevit2023|*" Project="false" />
       <Build Solution="DebugRevit2025|*" Project="false" />
       <Build Solution="DebugRevit2026|*" Project="false" />
+      <Build Solution="ReleaseMS2025|*" Project="false" />
+      <Build Solution="ReleaseRevit2022|*" Project="false" />
+      <Build Solution="ReleaseRevit2023|*" Project="false" />
+      <Build Solution="ReleaseRevit2024|*" Project="false" />
+      <Build Solution="ReleaseRevit2025|*" Project="false" />
+      <Build Solution="ReleaseRevit2026|*" Project="false" />
     </Project>
   </Folder>
 </Solution>

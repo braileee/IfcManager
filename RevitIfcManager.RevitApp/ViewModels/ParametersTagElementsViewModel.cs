@@ -44,7 +44,7 @@ namespace RevitIfcManager.ViewModels
             string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
             List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings);
-            List<PicklistGroup> picklistGroups = ExcelDataLoader.ReadAllGroups(excelFilePath, settingsRoot.ExcelSettings);
+            List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings);
             PropertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings);
             Expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings);
             ComposedItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings);
