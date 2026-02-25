@@ -1,13 +1,12 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using IfcManager.BL.Models;
 using PSURevitApps.Core;
 using PSURevitApps.Core.Models;
 using RevitIfcManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using static NPOI.HSSF.UserModel.HeaderFooter;
 
 namespace RevitIfcManager.EventHandlers
 {

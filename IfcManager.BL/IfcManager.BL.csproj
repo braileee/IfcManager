@@ -6,9 +6,41 @@
 
 	<PropertyGroup Condition="'$(Configuration)'=='DebugRevit2024' Or '$(Configuration)'=='ReleaseRevit2024' Or '$(Configuration)'=='ReleaseRevit2023' Or '$(Configuration)'=='DebugRevit2023' Or '$(Configuration)'=='DebugRevit2022' Or '$(Configuration)'=='ReleaseRevit2022' Or '$(Configuration)'=='DebugMS2025' Or '$(Configuration)'=='ReleaseMS2025'">
 		<TargetFramework>net48</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='DebugRevit2025' Or '$(Configuration)'=='ReleaseRevit2025' Or '$(Configuration)'=='DebugRevit2026' Or '$(Configuration)'=='ReleaseRevit2026' Or '$(Configuration)'=='DebugStandalone2025' Or '$(Configuration)'=='ReleaseStandalone2025'">
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Files\IfcManagerFiles\IFC parameters.xlsx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Files\IfcManagerFiles\Settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="NPOI" Version="2.5.6" />
+		<PackageReference Include="Prism.Wpf" Version="8.1.97" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
 </Project>

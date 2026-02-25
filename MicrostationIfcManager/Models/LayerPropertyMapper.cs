@@ -4,6 +4,7 @@ using Bentley.DgnPlatformNET.Elements;
 using Bentley.ECObjects.Instance;
 using Bentley.ECObjects.Schema;
 using Bentley.MstnPlatformNET;
+using IfcManager.BL.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

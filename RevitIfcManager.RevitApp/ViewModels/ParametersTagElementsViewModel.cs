@@ -2,12 +2,13 @@
 using Autodesk.Revit.DB.ExtensibleStorage;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
 using NPOI.Util.Collections;
 using Prism.Commands;
 using Prism.Mvvm;
 using PSURevitApps.Core;
 using RevitIfcManager.EventHandlers;
-using RevitIfcManager.Json;
 using RevitIfcManager.Models;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace RevitIfcManager.ViewModels
                 return;
             }
 
-            string excelFilePath = ExcelDataLoader.LoadExistingOrPrompt();
+            string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
             List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings);
             List<PicklistGroup> picklistGroups = ExcelDataLoader.ReadAllGroups(excelFilePath, settingsRoot.ExcelSettings);

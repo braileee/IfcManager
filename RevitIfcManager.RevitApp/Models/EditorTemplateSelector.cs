@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace RevitIfcManager.Models
+namespace RevitIfcManager.RevitApp.Models
 {
     public class EditorTemplateSelector : DataTemplateSelector
     {
@@ -18,18 +13,31 @@ namespace RevitIfcManager.Models
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is not PropertyField field)
+            var field = item as PropertyField;
+            if (field == null)
                 return base.SelectTemplate(item, container);
 
-            return field.EditorType switch
+            switch (field.EditorType)
             {
-                EditorType.Bool => BoolTemplate,
-                EditorType.Double => DoubleTemplate,
-                EditorType.Int => IntTemplate,
-                EditorType.String => StringTemplate,
-                EditorType.Combo => ComboTemplate,
-                _ => StringTemplate
-            };
+                case EditorType.Bool:
+                    return BoolTemplate;
+
+                case EditorType.Double:
+                    return DoubleTemplate;
+
+                case EditorType.Int:
+                    return IntTemplate;
+
+                case EditorType.String:
+                    return StringTemplate;
+
+                case EditorType.Combo:
+                    return ComboTemplate;
+
+                default:
+                    return StringTemplate;
+            }
+
         }
     }
 

@@ -1,7 +1,8 @@
 ﻿using Bentley.DgnPlatformNET;
 using Bentley.DgnPlatformNET.Elements;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
 using MicrostationIfcManager.Extensions;
-using MicrostationIfcManager.Json;
 using MicrostationIfcManager.Models;
 using Prism.Commands;
 using Prism.Mvvm;

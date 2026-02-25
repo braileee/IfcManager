@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace PSURevitApps.BL.Utils
+namespace IfcManager.Utils
 {
     public static class AssemblyUtils
     {

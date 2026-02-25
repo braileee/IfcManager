@@ -1,9 +1,9 @@
 ﻿using Autodesk.Revit.UI;
-using MullerWust.Revit.Common.Utils;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
+using IfcManager.Utils;
 using Prism.Commands;
 using Prism.Mvvm;
-using PSURevitApps.BL.Utils;
-using RevitIfcManager.Json;
 using System;
 using System.IO;
 
@@ -16,7 +16,7 @@ namespace RevitIfcManager.ViewModels
             SettingsFilePath = LoadSettings();
             LoadSettingsCommand = new DelegateCommand(OnLoadSettingsCommand);
 
-            ExcelFilePath = Properties.Settings.Default.ExcelFilePath;
+            ExcelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
             LoadExcelCommand = new DelegateCommand(OnLoadExcelCommand);
         }
@@ -54,7 +54,7 @@ namespace RevitIfcManager.ViewModels
                 return "N/A";   
             }
 
-            return Properties.Settings.Default.SettingsFilePath;
+            return SettingsLoader.GetPath();
         }
 
         private string settingsFilePath;
@@ -66,8 +66,7 @@ namespace RevitIfcManager.ViewModels
             set
             {
                 settingsFilePath = value;
-                Properties.Settings.Default.SettingsFilePath = settingsFilePath;
-                Properties.Settings.Default.Save();
+                SettingsLoader.SavePath(value); 
                 RaisePropertyChanged();
             }
         }
@@ -82,8 +81,7 @@ namespace RevitIfcManager.ViewModels
             set
             {
                 excelFilePath = value;
-                Properties.Settings.Default.ExcelFilePath = excelFilePath;
-                Properties.Settings.Default.Save();
+                ExcelDataLoader.SavePath(value);
                 RaisePropertyChanged();
             }
         }

@@ -1,9 +1,11 @@
 ﻿using Bentley.DgnPlatformNET;
 using Bentley.DgnPlatformNET.Elements;
 using Bentley.MstnPlatformNET;
-using MicrostationIfcManager.Json;
+using IfcManager.BL;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
+using IfcManager.Utils;
 using MicrostationIfcManager.Models;
-using MicrostationIfcManager.Utils;
 using MicrostationIfcManager.ViewModels;
 using MicrostationIfcManager.Views;
 using System;
@@ -90,7 +92,7 @@ namespace MicrostationIfcManager
             try
             {
                 string assemblyFolder = AssemblyUtils.GetFolder(typeof(App));
-                string defaultSettingsPath = System.IO.Path.Combine(assemblyFolder, "Files", "MicrostationIfcManager", "Settings.json");
+                string defaultSettingsPath = System.IO.Path.Combine(assemblyFolder, Constants.FilesFolder, Constants.IfcManagerFolder, Constants.JsonSettingsFileName);
                 string currentSettingsPath = Properties.Settings.Default.SettingsFilePath;
 
                 if (string.IsNullOrEmpty(currentSettingsPath) || !File.Exists(currentSettingsPath))

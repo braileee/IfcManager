@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace PSURevitApps.BL.Models
+namespace IfcManager.BL.Models
 {
     public class Log
     {

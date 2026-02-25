@@ -1,5 +1,5 @@
 ﻿using Autodesk.Revit.DB;
-using RevitIfcManager.Json;
+using IfcManager.BL.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

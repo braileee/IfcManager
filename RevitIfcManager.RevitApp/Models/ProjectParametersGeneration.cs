@@ -1,8 +1,8 @@
 ﻿using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using IfcManager.BL.Models;
 using PSURevitApps.Core;
-using RevitIfcManager.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

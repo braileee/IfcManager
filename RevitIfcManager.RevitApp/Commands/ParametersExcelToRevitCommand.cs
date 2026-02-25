@@ -1,17 +1,15 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using MullerWust.Revit.Common.Utils;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
 using RevitIfcManager.EventHandlers;
-using RevitIfcManager.Json;
 using RevitIfcManager.Models;
-using RevitIfcManager.Views;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 
-namespace RevitIfcManager.Commands
+namespace RevitIfcManager.RevitApp.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class ParametersExcelToRevitCommand : IExternalCommand
@@ -24,7 +22,7 @@ namespace RevitIfcManager.Commands
                 SettingsRoot settingsRoot = SettingsLoader.LoadExistingOrDefault();
 
                 // load excel data
-                string excelFilePath = ExcelDataLoader.LoadExistingOrPrompt();
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
                 if (string.IsNullOrEmpty(excelFilePath))
                 {

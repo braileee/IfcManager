@@ -1,14 +1,15 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using MullerWust.Revit.Common.Utils;
-using RevitIfcManager.Json;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
+using IfcManager.Utils;
 using RevitIfcManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RevitIfcManager.Commands
+namespace RevitIfcManager.RevitApp.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class GenerateIfcMappingCommand : IExternalCommand
@@ -18,20 +19,11 @@ namespace RevitIfcManager.Commands
             try
             {
                 // Load settings
-                string settingsFilePath = Properties.Settings.Default.SettingsFilePath;
-
-                SettingsRoot settingsRoot = SettingsLoader.Load(settingsFilePath);
+                SettingsRoot settingsRoot = SettingsLoader.LoadExistingOrDefault();
 
                 // load excel data
 
-                string excelFilePath = Properties.Settings.Default.ExcelFilePath;
-
-                if (string.IsNullOrEmpty(Properties.Settings.Default.ExcelFilePath))
-                {
-                    excelFilePath = FilePromptUtils.GetFilePath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xlsx files (*.xlsx)|*.xlsx|All files (*.*)|*.*");
-                    Properties.Settings.Default.ExcelFilePath = excelFilePath;
-                    Properties.Settings.Default.Save();
-                }
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
                 if (string.IsNullOrEmpty(excelFilePath))
                 {

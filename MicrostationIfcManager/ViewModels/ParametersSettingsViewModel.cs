@@ -1,4 +1,5 @@
-﻿using MicrostationIfcManager.Utils;
+﻿using IfcManager.BL;
+using IfcManager.Utils;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -67,7 +68,7 @@ namespace MicrostationIfcManager.ViewModels
             if (string.IsNullOrEmpty(Properties.Settings.Default.SettingsFilePath) || !File.Exists(Properties.Settings.Default.SettingsFilePath))
             {
                 string assemblyFolder = AssemblyUtils.GetFolder(typeof(ParametersSettingsViewModel));
-                string defaultSettingsPath = System.IO.Path.Combine(assemblyFolder, "Files", "MicrostationIfcManager", "Settings.json");
+                string defaultSettingsPath = System.IO.Path.Combine(assemblyFolder, Constants.FilesFolder, Constants.IfcManagerFolder, Constants.JsonSettingsFileName);
             }
 
             if (System.IO.File.Exists(Properties.Settings.Default.SettingsFilePath))

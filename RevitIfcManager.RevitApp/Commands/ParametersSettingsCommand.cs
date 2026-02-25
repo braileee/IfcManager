@@ -1,8 +1,8 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using PSURevitApps.BL.Utils;
-using RevitIfcManager.Json;
+using IfcManager.BL.Json;
+using IfcManager.BL.Models;
 using RevitIfcManager.Models;
 using RevitIfcManager.Views;
 using System;
@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace RevitIfcManager.Commands
+namespace RevitIfcManager.RevitApp.Commands
 {
     [Transaction(TransactionMode.Manual)]
 
@@ -25,7 +25,7 @@ namespace RevitIfcManager.Commands
             {
                
                 SettingsRoot settingsRoot = SettingsLoader.LoadExistingOrDefault();
-                string excelFilePath = ExcelDataLoader.LoadExistingOrPrompt();
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
                 if (string.IsNullOrEmpty(excelFilePath))
                 {

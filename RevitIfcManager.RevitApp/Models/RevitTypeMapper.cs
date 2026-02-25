@@ -16,14 +16,32 @@ namespace RevitIfcManager.Models
                 return SpecTypeId.String.Text;
             }
 
-            return dataType.ToLower() switch
+            ForgeTypeId result;
+
+            switch (dataType.ToLower())
             {
-                "string" => SpecTypeId.String.Text,
-                "int" => SpecTypeId.Int.Integer,
-                "double" => SpecTypeId.Number,
-                "bool" => SpecTypeId.Boolean.YesNo,
-                _ => SpecTypeId.String.Text,
-            };
+                case "string":
+                    result = SpecTypeId.String.Text;
+                    break;
+
+                case "int":
+                    result = SpecTypeId.Int.Integer;
+                    break;
+
+                case "double":
+                    result = SpecTypeId.Number;
+                    break;
+
+                case "bool":
+                    result = SpecTypeId.Boolean.YesNo;
+                    break;
+
+                default:
+                    result = SpecTypeId.String.Text;
+                    break;
+            }
+
+            return result;
         }
     }
 }

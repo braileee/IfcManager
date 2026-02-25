@@ -1,17 +1,17 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
-using PSURevitApps.BL;
-using PSURevitApps.BL.Utils;
+using IfcManager.BL;
+using IfcManager.Utils;
 using PSURevitApps.Core.Models;
-using RevitIfcManager.Commands;
+using RevitIfcManager.RevitApp.Commands;
 using RevitIfcManager.ViewModels;
 using RevitIfcManager.Views;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace PSURevitApps.UI
+namespace RevitIfcManager.UI
 {
     [Transaction(TransactionMode.Manual)]
     public class App : IExternalApplication
@@ -40,10 +40,8 @@ namespace PSURevitApps.UI
 
                 string[] assemblyFilePathList = Directory.GetFiles(assemblyFolder, "*.dll", SearchOption.TopDirectoryOnly);
 
-                string incrementerDllPath = assemblyFilePathList.FirstOrDefault(x => x.Contains($"{nameof(RevitPropertyIncrementer)}.dll"));
-
                 //Ifc manager
-                string ifcManagerDllPath = assemblyFilePathList.FirstOrDefault(x => x.Contains($"{nameof(RevitIfcManager)}.dll"));
+                string ifcManagerDllPath = assemblyFilePathList.FirstOrDefault(x => x.Contains($"{nameof(RevitIfcManager.RevitApp)}.dll"));
                 string ifcManagerSettingsImagePath = Path.Combine(assemblyFolder, "Resources", "RevitIfcManagerSettings_32.png");
                 PushButton ifcManagerSettingsButton = ribbon.AddLargeButton(panelIfc, ifcManagerDllPath, "Settings", typeof(ParametersSettingsCommand), "Settings", ifcManagerSettingsImagePath);
 

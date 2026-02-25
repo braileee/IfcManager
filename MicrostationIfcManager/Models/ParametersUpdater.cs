@@ -1,4 +1,5 @@
 ﻿using Bentley.DgnPlatformNET.Elements;
+using IfcManager.BL.Models;
 using MicrostationIfcManager.Extensions;
 using System;
 using System.Collections.Generic;
