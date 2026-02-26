@@ -262,24 +262,25 @@ namespace IfcManager.BL.Models
             return propertyValueMatches;
         }
 
-        public static string LoadOrPromptExcelFilePath()
+        public static string LoadOrPromptExcelFilePath(FileLinkSettings fileLinkSettings)
         {
-            string excelFilePath = Properties.Settings.Default.ExcelFilePath;
+            string excelFilePath = string.Empty;
 
-            if (string.IsNullOrEmpty(excelFilePath) || !File.Exists(excelFilePath))
+            if (File.Exists(fileLinkSettings.CustomExcelFilePath))
             {
-                string assemblyFolder = AssemblyUtils.GetFolder(typeof(ExcelDataLoader));
-                excelFilePath = System.IO.Path.Combine(assemblyFolder, Constants.FilesFolder, Constants.IfcManagerFolder, Constants.ExcelSettingsFileName);
-                Properties.Settings.Default.ExcelFilePath = excelFilePath;
-                Properties.Settings.Default.Save();
+                excelFilePath = fileLinkSettings.CustomExcelFilePath;
+            }
+            else
+            {
+                if (fileLinkSettings.LoadDefault)
+                {
+                    string assemblyFolder = AssemblyUtils.GetFolder(typeof(ExcelDataLoader));
+                    excelFilePath = System.IO.Path.Combine(assemblyFolder, Constants.FilesFolder, Constants.IfcManagerFolder, Constants.ExcelSettingsFileName);
+                }
             }
 
-            if (string.IsNullOrEmpty(excelFilePath) || !File.Exists(excelFilePath))
-            {
-                excelFilePath = FilePromptUtils.GetFilePath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "xlsx files (*.xlsx)|*.xlsx|All files (*.*)|*.*");
-                Properties.Settings.Default.ExcelFilePath = excelFilePath;
-                Properties.Settings.Default.Save();
-            }
+            Properties.Settings.Default.ExcelFilePath = excelFilePath;
+            Properties.Settings.Default.Save();
 
             return excelFilePath;
         }

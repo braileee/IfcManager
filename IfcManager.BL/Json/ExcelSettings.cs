@@ -11,6 +11,7 @@
         public ExpressionSheet ExpressionSheet { get; set; }
         public ComposedSheet ComposedSheet { get; set; }
 
+        public FileLinkSettings FileLinkSettings { get; set; }
 
         public ExcelSettings()
         {
@@ -21,8 +22,7 @@
             PropertyExactMatchSheet = new PropertyExactMatchSheet();
             ExpressionSheet = new ExpressionSheet();
             ComposedSheet = new ComposedSheet();
+            FileLinkSettings = new FileLinkSettings();
         }
-
-
     }
 }

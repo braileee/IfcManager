@@ -20,8 +20,9 @@ namespace IfcValidator.ViewModels
     {
         public MainViewModel()
         {
-            ExcelDataLoader.LoadOrPromptExcelFilePath();
-            SettingsLoader.LoadExistingOrDefault();
+            var settingsRoot = SettingsLoader.LoadExistingOrDefault();
+
+            ExcelDataLoader.LoadOrPromptExcelFilePath(settingsRoot.ExcelSettings.FileLinkSettings);
 
             ExcelFilePath = ExcelDataLoader.GetPath();
             IfcFolderPath = Properties.Settings.Default.IfcFolderPath;

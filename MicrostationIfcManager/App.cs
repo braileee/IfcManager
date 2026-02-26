@@ -110,7 +110,7 @@ namespace MicrostationIfcManager
                 Properties.Settings.Default.SettingsFilePath = currentSettingsPath;
                 Properties.Settings.Default.Save();
 
-                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(SettingsRoot.ExcelSettings.FileLinkSettings);
 
                 if (string.IsNullOrEmpty(excelFilePath))
                 {

@@ -25,7 +25,7 @@ namespace RevitIfcManager.RevitApp.Commands
             {
                
                 SettingsRoot settingsRoot = SettingsLoader.LoadExistingOrDefault();
-                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(settingsRoot.ExcelSettings.FileLinkSettings);
 
                 if (string.IsNullOrEmpty(excelFilePath))
                 {

@@ -23,7 +23,7 @@ namespace RevitIfcManager.RevitApp.Commands
 
                 // load excel data
 
-                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(settingsRoot.ExcelSettings.FileLinkSettings);
 
                 if (string.IsNullOrEmpty(excelFilePath))
                 {

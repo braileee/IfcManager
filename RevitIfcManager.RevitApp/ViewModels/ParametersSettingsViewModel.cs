@@ -15,9 +15,7 @@ namespace RevitIfcManager.ViewModels
         {
             SettingsFilePath = LoadSettings();
             LoadSettingsCommand = new DelegateCommand(OnLoadSettingsCommand);
-
-            ExcelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
-
+            ExcelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(SettingsRoot.ExcelSettings.FileLinkSettings);
             LoadExcelCommand = new DelegateCommand(OnLoadExcelCommand);
         }
 
@@ -47,11 +45,11 @@ namespace RevitIfcManager.ViewModels
 
         private string LoadSettings()
         {
-            SettingsRoot settingsRoot = SettingsLoader.LoadExistingOrDefault();
+            SettingsRoot = SettingsLoader.LoadExistingOrDefault();
 
-            if(settingsRoot == null)
+            if (SettingsRoot == null)
             {
-                return "N/A";   
+                return "N/A";
             }
 
             return SettingsLoader.GetPath();
@@ -66,7 +64,7 @@ namespace RevitIfcManager.ViewModels
             set
             {
                 settingsFilePath = value;
-                SettingsLoader.SavePath(value); 
+                SettingsLoader.SavePath(value);
                 RaisePropertyChanged();
             }
         }
@@ -87,6 +85,7 @@ namespace RevitIfcManager.ViewModels
         }
 
         public DelegateCommand LoadExcelCommand { get; }
+        public SettingsRoot SettingsRoot { get; private set; }
 
         public event EventHandler CloseRequest;
 
