@@ -1,20 +1,28 @@
-﻿using System.Collections.Generic;
-
-namespace IfcManager.BL.Json
+﻿namespace IfcManager.BL.Json
 {
     public class ExcelSettings
     {
-        public string PropertySetNameColumn { get; set; }
-        public string PropertyNameColumn { get; set; }
-        public string DataTypeColumn { get; set; }
-        public int HeaderRowIndex { get; set; }
-        public string PropertiesSheetName { get; set; }
-        public string PicklistSheetName { get; set; }
-        public string MicrostationLayersMappingSheetName { get; set; }
-        public string MicrostationLayerColumnName { get; set; }
-        public List<string> PropertyMatchSheets { get; set; } = new List<string>();
-        public List<string> PropertyExactMatchSheets { get; set; } = new List<string>();
-        public string ExpressionsSheetName { get; set; }
-        public string ComposedSheetName { get; set; }
+
+        public PropertiesSheet PropertiesSheet { get; set; }
+        public PicklistSheet PicklistSheet { get; set; }
+        public LayersMappingSheet LayersMappingSheet { get; set; }
+        public PropertyMatchSheet PropertyMatchSheet { get; set; }
+        public PropertyExactMatchSheet PropertyExactMatchSheet { get; set; }
+        public ExpressionSheet ExpressionSheet { get; set; }
+        public ComposedSheet ComposedSheet { get; set; }
+
+
+        public ExcelSettings()
+        {
+            PropertiesSheet = new PropertiesSheet();
+            PicklistSheet = new PicklistSheet();
+            LayersMappingSheet = new LayersMappingSheet();
+            PropertyMatchSheet = new PropertyMatchSheet();
+            PropertyExactMatchSheet = new PropertyExactMatchSheet();
+            ExpressionSheet = new ExpressionSheet();
+            ComposedSheet = new ComposedSheet();
+        }
+
+
     }
 }

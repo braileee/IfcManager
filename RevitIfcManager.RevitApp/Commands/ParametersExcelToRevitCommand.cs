@@ -36,7 +36,7 @@ namespace RevitIfcManager.RevitApp.Commands
                     return Result.Cancelled;
                 }
 
-                List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings);
+                List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings.PropertiesSheet);
 
                 ParametersExcelToRevitEventHandler parametersExcelToRevitEventHandler = new ParametersExcelToRevitEventHandler();
                 parametersExcelToRevitEventHandler.Raise(new ParametersExcelToRevitOptions

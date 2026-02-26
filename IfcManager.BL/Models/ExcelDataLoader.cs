@@ -1,6 +1,5 @@
 ﻿using IfcManager.BL.Enums;
 using IfcManager.BL.Json;
-using IfcManager.Json;
 using IfcManager.Models;
 using IfcManager.Utils;
 using NPOI.SS.UserModel;
@@ -17,14 +16,14 @@ namespace IfcManager.BL.Models
 {
     public static class ExcelDataLoader
     {
-        public static List<PropertySetItem> LoadPropertySetItems(string filePath, ExcelSettings settings)
+        public static List<PropertySetItem> LoadPropertySetItems(string filePath, PropertiesSheet settings)
         {
             var rows = new List<PropertyDataRow>();
 
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
-                ISheet sheet = workbook.GetSheet(settings.PropertiesSheetName);
+                ISheet sheet = workbook.GetSheet(settings.SheetName);
 
                 if (sheet == null)
                 {
@@ -78,13 +77,13 @@ namespace IfcManager.BL.Models
 
         }
 
-        public static List<PicklistGroup> LoadPicklistGroups(string filePath, ExcelSettings settings)
+        public static List<PicklistGroup> LoadPicklistGroups(string filePath, PicklistSheet settings)
         {
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
-                ISheet sheet = workbook.GetSheet(settings.PicklistSheetName);
+                ISheet sheet = workbook.GetSheet(settings.SheetName);
                 if (sheet == null)
                     return new List<PicklistGroup>();
 
@@ -144,14 +143,13 @@ namespace IfcManager.BL.Models
 
         public static List<LayerMappingItem> ReadLayerMappings(
                                            string filePath,
-                                          ExcelSettings settings,
-                                           string layerNameColumn)
+                                          LayersMappingSheet settings)
         {
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
-                ISheet sheet = workbook.GetSheet(settings.MicrostationLayersMappingSheetName);
+                ISheet sheet = workbook.GetSheet(settings.SheetName);
                 if (sheet == null)
                     return new List<LayerMappingItem>();
 
@@ -173,7 +171,7 @@ namespace IfcManager.BL.Models
 
                     columns[c] = header;
 
-                    if (header == layerNameColumn)
+                    if (header == settings.LayerColumnName)
                         layerNameColIndex = c;
                 }
 
@@ -215,7 +213,7 @@ namespace IfcManager.BL.Models
             }
         }
 
-        public static List<PropertyValueMatch> LoadPropertiesValueMatches(string filePath, ExcelSettings settings)
+        public static List<PropertyValueMatch> LoadPropertiesValueMatches(string filePath, PropertyMatchSheet settings)
         {
             List<PropertyValueMatch> propertyValueMatches = new List<PropertyValueMatch>();
 
@@ -223,7 +221,7 @@ namespace IfcManager.BL.Models
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
-                List<string> sheetNames = settings.PropertyMatchSheets;
+                List<string> sheetNames = settings.SheetNames;
 
                 foreach (string sheetName in sheetNames)
                 {
@@ -286,22 +284,22 @@ namespace IfcManager.BL.Models
             return excelFilePath;
         }
 
-        public static List<ExpressionItem> LoadExpressions(string excelFilePath, ExcelSettings excelSettings)
+        public static List<ExpressionItem> LoadExpressions(string excelFilePath, ExpressionSheet setting)
         {
             var expressions = new List<ExpressionItem>();
             using (var fs = new FileStream(excelFilePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
-                ISheet sheet = workbook.GetSheet(excelSettings.ExpressionsSheetName);
+                ISheet sheet = workbook.GetSheet(setting.SheetName);
                 if (sheet == null)
                     return expressions;
                 // Assuming first row is header
-                int headerRowIndex = excelSettings.HeaderRowIndex;
+                int headerRowIndex = setting.HeaderRowIndex;
                 IRow headerRow = sheet.GetRow(headerRowIndex);
-                int colSourceProperty = headerRow.Cells.FindIndex(c => c.StringCellValue == "Source Property Name");
-                int colTargetProperty = headerRow.Cells.FindIndex(c => c.StringCellValue == "Target Property Name");
-                int colFunctionType = headerRow.Cells.FindIndex(c => c.StringCellValue == "Function");
-                int colValue = headerRow.Cells.FindIndex(c => c.StringCellValue == "Value");
+                int colSourceProperty = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.SourcePropertyColumnName);
+                int colTargetProperty = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.TargetPropertyColumnName);
+                int colFunctionType = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.FunctionColumnName);
+                int colValue = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.ValueColumnName);
                 for (int i = headerRowIndex + 1; i <= sheet.LastRowNum; i++)
                 {
                     IRow row = sheet.GetRow(i);
@@ -329,23 +327,23 @@ namespace IfcManager.BL.Models
             return expressions;
         }
 
-        public static List<ComposedPropertyItem> LoadComposed(string excelFilePath, ExcelSettings excelSettings)
+        public static List<ComposedPropertyItem> LoadComposed(string excelFilePath, ComposedSheet settings)
         {
             var composedItems = new List<ComposedPropertyItem>();
             using (var fs = new FileStream(excelFilePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
-                ISheet sheet = workbook.GetSheet(excelSettings.ComposedSheetName);
+                ISheet sheet = workbook.GetSheet(settings.SheetName);
 
                 if (sheet == null)
                 {
                     return composedItems;
                 }
 
-                int headerRowIndex = excelSettings.HeaderRowIndex;
+                int headerRowIndex = settings.HeaderRowIndex;
                 IRow headerRow = sheet.GetRow(headerRowIndex);
-                int cellIndexName = headerRow.Cells.FindIndex(c => c.StringCellValue == "Composed Property Name");
-                int cellIndexFormula = headerRow.Cells.FindIndex(c => c.StringCellValue == "Formula");
+                int cellIndexName = headerRow.Cells.FindIndex(c => c.StringCellValue == settings.ComposedPropertyColumnName);
+                int cellIndexFormula = headerRow.Cells.FindIndex(c => c.StringCellValue == settings.FormulaColumnName);
 
                 for (int i = headerRowIndex + 1; i <= sheet.LastRowNum; i++)
                 {
@@ -373,7 +371,7 @@ namespace IfcManager.BL.Models
             return composedItems;
         }
 
-        public static List<PropertyValueMatch> LoadPropertiesExactValueMatches(string filePath, ExcelSettings settings)
+        public static List<PropertyValueMatch> LoadPropertiesExactValueMatches(string filePath, PropertyExactMatchSheet settings)
         {
             List<PropertyValueMatch> propertyValueMatches = new List<PropertyValueMatch>();
 
@@ -381,7 +379,7 @@ namespace IfcManager.BL.Models
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
-                List<string> sheetNames = settings.PropertyExactMatchSheets;
+                List<string> sheetNames = settings.SheetNames;
 
                 foreach (string sheetName in sheetNames)
                 {

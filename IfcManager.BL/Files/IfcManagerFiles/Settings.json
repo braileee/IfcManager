@@ -1,16 +1,46 @@
 {
-  "ExcelSettings": {
-    "PropertySetNameColumn": "Property Set Name",
-    "PropertyNameColumn": "Property Name",
-    "DataTypeColumn": "Data Type",
-    "HeaderRowIndex": 0,
-    "PropertiesSheetName": "Properties",
-    "PicklistSheetName": "Picklist",
-    "MicrostationLayersMappingSheetName": "Microstation Layers Mapping",
-    "MicrostationLayerColumnName": "LayerName",
-    "PropertyMatchSheets": ["LocationRoot Match"],
-    "PropertyExactMatchSheets": ["4DGroup Exact Match"],
-    "ExpressionsSheetName": "Expressions",
-    "ComposedSheetName": "Composed"
-  }
+      "ExcelSettings": {
+            "PropertiesSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetName": "Properties",
+                  "PropertySetNameColumn": "Property Set Name",
+                  "PropertyNameColumn": "Property Name",
+                  "DataTypeColumn": "Data Type"
+            },
+            "PicklistSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetName": "Picklist"
+            },
+            "LayersMappingSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetName": "Layers Mapping",
+                  "LayerColumnName": "LayerName"
+            },
+            "PropertyMatchSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetNames": [
+                        "LocationRoot Match"
+                  ],
+            },
+            "PropertyExactMatchSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetNames": [
+                        "4DGroup Exact Match"
+                  ],
+            },
+            "ExpressionSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetName": "Expressions",
+                  "SourcePropertyColumnName": "Source Property Name",
+                  "TargetPropertyColumnName": "Target Property Name",
+                  "FunctionColumnName": "Function",
+                  "ValueColumnName": "Value"
+            },
+            "ComposedSheet": {
+                  "HeaderRowIndex": 0,
+                  "SheetName": "Composed",
+                  "ComposedPropertyColumnName": "Composed Property Name",
+                  "FormulaColumnName": "Formula"
+            }
+      }
 }

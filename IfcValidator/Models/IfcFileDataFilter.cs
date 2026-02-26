@@ -507,7 +507,11 @@ namespace IfcValidator.Models
 
                     ifcFileWithWrongData.IfcElements.Add(ifcElementWithWrongData);
                 }
+
+                ifcFilesWithWrongData.Add(ifcFileWithWrongData);
             }
+
+            return ifcFilesWithWrongData;
         }
     }
 }

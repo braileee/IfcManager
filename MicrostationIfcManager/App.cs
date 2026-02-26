@@ -118,13 +118,13 @@ namespace MicrostationIfcManager
                     return;
                 }
 
-                PropertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, SettingsRoot.ExcelSettings);
-                PicklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, SettingsRoot.ExcelSettings);
-                LayerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, SettingsRoot.ExcelSettings, "LayerName");
-                ExpressionItems = ExcelDataLoader.LoadExpressions(excelFilePath, SettingsRoot.ExcelSettings);
-                PropertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, SettingsRoot.ExcelSettings);
-                ComposedItems = ExcelDataLoader.LoadComposed(excelFilePath, SettingsRoot.ExcelSettings);
-                PropertyValueExactMatches = ExcelDataLoader.LoadPropertiesExactValueMatches(excelFilePath, SettingsRoot.ExcelSettings);
+                PropertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, SettingsRoot.ExcelSettings.PropertiesSheet);
+                PicklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, SettingsRoot.ExcelSettings.PicklistSheet);
+                LayerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, SettingsRoot.ExcelSettings.LayersMappingSheet);
+                ExpressionItems = ExcelDataLoader.LoadExpressions(excelFilePath, SettingsRoot.ExcelSettings.ExpressionSheet);
+                PropertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, SettingsRoot.ExcelSettings.PropertyMatchSheet);
+                ComposedItems = ExcelDataLoader.LoadComposed(excelFilePath, SettingsRoot.ExcelSettings.ComposedSheet);
+                PropertyValueExactMatches = ExcelDataLoader.LoadPropertiesExactValueMatches(excelFilePath, SettingsRoot.ExcelSettings.PropertyExactMatchSheet);
 
                 var dgnFile = Session.Instance.GetActiveDgnFile();
             }

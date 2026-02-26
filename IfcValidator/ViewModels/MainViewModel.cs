@@ -64,12 +64,12 @@ namespace IfcValidator.ViewModels
                     return;
                 }
 
-                List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(ExcelFilePath, settingsRoot.ExcelSettings);
-                List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings);
-                List<PropertyValueMatch> propertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings);
-                List<ExpressionItem> expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings);
-                List<LayerMappingItem> layerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, settingsRoot.ExcelSettings, "LayerName");
-                List<ComposedPropertyItem> composedPropertyItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings);
+                List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(ExcelFilePath, settingsRoot.ExcelSettings.PropertiesSheet);
+                List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings.PicklistSheet);
+                List<PropertyValueMatch> propertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings.PropertyMatchSheet);
+                List<ExpressionItem> expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings.ExpressionSheet);
+                List<LayerMappingItem> layerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, settingsRoot.ExcelSettings.LayersMappingSheet);
+                List<ComposedPropertyItem> composedPropertyItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings.ComposedSheet);
 
                 List<string> ifcFilePaths = System.IO.Directory.GetFiles(IfcFolderPath, "*.ifc", System.IO.SearchOption.TopDirectoryOnly).ToList();
 

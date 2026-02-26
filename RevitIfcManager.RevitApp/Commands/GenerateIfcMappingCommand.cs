@@ -30,7 +30,7 @@ namespace RevitIfcManager.RevitApp.Commands
                     return Result.Cancelled;
                 }
 
-                List<PropertySetItem> propertyDefinitions = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings);
+                List<PropertySetItem> propertyDefinitions = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings.PropertiesSheet);
 
                 string mappingFilePath = FilePromptUtils.SaveFileToFolder(Environment.SpecialFolder.Desktop, "IfcMapping", "txt");
 

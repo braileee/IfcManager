@@ -43,12 +43,12 @@ namespace RevitIfcManager.ViewModels
 
             string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath();
 
-            List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings);
-            List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings);
-            PropertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings);
-            Expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings);
-            ComposedItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings);
-            PropertyValueExactMatches = ExcelDataLoader.LoadPropertiesExactValueMatches(excelFilePath, settingsRoot.ExcelSettings);
+            List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(excelFilePath, settingsRoot.ExcelSettings.PropertiesSheet);
+            List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings.PicklistSheet);
+            PropertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings.PropertyMatchSheet);
+            Expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings.ExpressionSheet);
+            ComposedItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings.ComposedSheet);
+            PropertyValueExactMatches = ExcelDataLoader.LoadPropertiesExactValueMatches(excelFilePath, settingsRoot.ExcelSettings.PropertyExactMatchSheet);
 
             CustomProperties = propertySetItems.SelectMany(item => item.PropertyItems).ToList();
             Dictionary<string, List<string>> propertiesWithValues = picklistGroups.ToDictionary(item => item.GroupName, item => item.Values);
