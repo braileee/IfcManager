@@ -20,12 +20,8 @@ namespace IfcValidator.Models
         public List<IfcFile> IfcFiles { get; } = new List<IfcFile>();
         public List<PropertySetItem> PropertySetItems { get; } = new List<PropertySetItem>();
 
-        public List<IfcFile> GetPerPropertySetItems()
-        {
-            return GetFilteredIfcFiles();
-        }
 
-        private List<IfcFile> GetFilteredIfcFiles()
+        public List<IfcFile> GetElementsWithAnyRequiredProperty()
         {
             List<IfcFile> filteredIfcFiles = new List<IfcFile>();
 
@@ -67,16 +63,22 @@ namespace IfcValidator.Models
                         ifcElementUpdated.IfcProperties.Add(ifcProperty);
                     }
 
-                    filteredIfcFile.IfcElements.Add(ifcElementUpdated);
+                    if (ifcElementUpdated.IfcProperties.Any())
+                    {
+                        filteredIfcFile.IfcElements.Add(ifcElementUpdated);
+                    }
                 }
 
-                filteredIfcFiles.Add(filteredIfcFile);
+                if (filteredIfcFile.IfcElements.Any())
+                {
+                    filteredIfcFiles.Add(filteredIfcFile);
+                }
             }
 
             return filteredIfcFiles;
         }
 
-        public List<IfcFile> GetWithEmptyValues(List<IfcFile> filteredIfcFiles)
+        public List<IfcFile> GetElementsWithEmptyValues(List<IfcFile> filteredIfcFiles)
         {
             List<IfcFile> emptyPropertyFiles = new List<IfcFile>();
 
@@ -327,6 +329,8 @@ namespace IfcValidator.Models
                                 continue;
                             }
 
+                            string targetPropertyName = targetProperty.PropertyName;
+
                             string targetValue = targetProperty?.Value?.ToString();
 
                             object evaluatedValue = ExpressionEvaluator.Evaluate(expression, sourceProperty?.Value);
@@ -334,7 +338,6 @@ namespace IfcValidator.Models
 
                             if (targetValue != evaluatedValueString)
                             {
-                                ifcElementUpdated.IfcProperties.Add(sourceProperty);
                                 ifcElementUpdated.IfcProperties.Add(targetProperty);
                             }
                         }
@@ -406,7 +409,7 @@ namespace IfcValidator.Models
             return updatedFiles;
         }
 
-        public List<IfcFile> GetMissingPropertiesData(List<IfcFile> ifcFiles, List<PropertySetItem> propertySetItems)
+        public List<IfcFile> GetElementsWithMissingProperties(List<IfcFile> ifcFiles, List<PropertySetItem> propertySetItems)
         {
             List<IfcFile> missingPropertiesFilesData = new List<IfcFile>();
 
@@ -433,7 +436,6 @@ namespace IfcValidator.Models
                         Layer = ifcElement.Layer,
                         Tag = ifcElement.Tag
                     };
-
 
                     foreach (PropertySetItem propertySetItem in propertySetItems)
                     {
@@ -471,12 +473,14 @@ namespace IfcValidator.Models
 
                 foreach (IfcElement ifcElement in ifcFile.IfcElements)
                 {
+                    string tag = ifcElement.Tag;
+
                     IfcElement ifcElementWithWrongData = new IfcElement
                     {
                         Guid = ifcElement.Guid,
                         IfcEntity = ifcElement.IfcEntity,
                         Layer = ifcElement.Layer,
-                        Tag = ifcElement.Tag,
+                        Tag = tag,
                         IfcProperties = new List<IfcProperty>(),
                     };
 
@@ -505,10 +509,16 @@ namespace IfcValidator.Models
                         }
                     }
 
-                    ifcFileWithWrongData.IfcElements.Add(ifcElementWithWrongData);
+                    if (ifcElementWithWrongData.IfcProperties.Any())
+                    {
+                        ifcFileWithWrongData.IfcElements.Add(ifcElementWithWrongData);
+                    }
                 }
 
-                ifcFilesWithWrongData.Add(ifcFileWithWrongData);
+                if (ifcFileWithWrongData.IfcElements.Any())
+                {
+                    ifcFilesWithWrongData.Add(ifcFileWithWrongData);
+                }
             }
 
             return ifcFilesWithWrongData;

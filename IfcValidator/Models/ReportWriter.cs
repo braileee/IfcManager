@@ -13,7 +13,7 @@ namespace IfcValidator.Models
 {
     public class ReportWriter
     {
-        public ReportWriter(List<IfcFile> ifcFiles, string reportFilePath, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<PropertyValueMatch> propertyValueMatches, List<ExpressionItem> expressions, List<LayerMappingItem> layerMappingItems, List<ComposedPropertyItem> composedPropertyItems)
+        public ReportWriter(List<IfcFile> ifcFiles, string reportFilePath, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<PropertyValueMatch> propertyValueMatches, List<ExpressionItem> expressions, List<LayerMappingItem> layerMappingItems, List<ComposedPropertyItem> composedPropertyItems, List<PropertyValueMatch> exactPropertyValueMatches)
         {
             IfcFiles = ifcFiles;
             ReportFilePath = reportFilePath;
@@ -23,6 +23,7 @@ namespace IfcValidator.Models
             Expressions = expressions;
             LayerMappingItems = layerMappingItems;
             ComposedPropertyItems = composedPropertyItems;
+            ExactPropertyValueMatches = exactPropertyValueMatches;
         }
 
         public List<IfcFile> IfcFiles { get; } = new List<IfcFile>();
@@ -33,6 +34,7 @@ namespace IfcValidator.Models
         public List<ExpressionItem> Expressions { get; } = new List<ExpressionItem>();
         public List<LayerMappingItem> LayerMappingItems { get; }
         public List<ComposedPropertyItem> ComposedPropertyItems { get; }
+        public List<PropertyValueMatch> ExactPropertyValueMatches { get; }
 
         public void Create()
         {
@@ -48,13 +50,24 @@ namespace IfcValidator.Models
 
             IfcFileDataFilter ifcFileDataFilter = new IfcFileDataFilter(IfcFiles, PropertySetItems, PicklistGroups);
 
-            List<IfcFile> ifcFilesMissingProperties = ifcFileDataFilter.GetMissingPropertiesData(IfcFiles, PropertySetItems);
+            //Elements with missing properties of defined property set
+            List<IfcFile> ifcFilesMissingProperties = ifcFileDataFilter.GetElementsWithMissingProperties(IfcFiles, PropertySetItems);
 
-            List<IfcFile> filteredIfcFiles = ifcFileDataFilter.GetPerPropertySetItems();
-            List<IfcFile> ifcFileWithEmptyValues = ifcFileDataFilter.GetWithEmptyValues(filteredIfcFiles);
+            //Collect elements which contains any of the property needed
+            List<IfcFile> filteredIfcFiles = ifcFileDataFilter.GetElementsWithAnyRequiredProperty();
+
+            //Element with properties of property sets but with empty values
+            List<IfcFile> ifcFileWithEmptyValues = ifcFileDataFilter.GetElementsWithEmptyValues(filteredIfcFiles);
+
+            // Valid picklist check according to excel file
             List<IfcFile> ifcFilesPicklistCheck = ifcFileDataFilter.GetPicklistCheck(filteredIfcFiles, PicklistGroups);
 
-            List<IfcFile> ifcFileNonMatchList = ifcFileDataFilter.GetNonMatchData(filteredIfcFiles, PropertyValueMatches);
+
+            List<PropertyValueMatch> allPropertyValueMatches = new List<PropertyValueMatch>();
+            allPropertyValueMatches.AddRange(PropertyValueMatches);
+            allPropertyValueMatches.AddRange(ExactPropertyValueMatches);
+
+            List<IfcFile> ifcFileNonMatchList = ifcFileDataFilter.GetNonMatchData(filteredIfcFiles, allPropertyValueMatches);
             List<IfcFile> ifcFileExpressions = ifcFileDataFilter.GetWrongExpressions(filteredIfcFiles, Expressions);
             List<IfcFile> wrongMappings = ifcFileDataFilter.GetWrongLayerMappings(filteredIfcFiles, LayerMappingItems);
             List<IfcFile> wrongComposedData = ifcFileDataFilter.GetWrongComposedData(filteredIfcFiles, ComposedPropertyItems);
@@ -71,29 +84,33 @@ namespace IfcValidator.Models
             List<string> picklistHeaders = mainHeaders.ToList();
             picklistHeaders.Add("Is From Picklist");
 
-            ISheet allPropertiesSheet = workbook.CreateSheet("All Properties");
-            WriteAllData(allPropertiesSheet, mainHeaders, IfcFiles);
+            List<string> missingPropertiesHeaders =
+                    new List<string>
+                    {
+                            "FilePath", "Guid", "IfcEntity", "Tag", "Layer",
+                            "Missing PropertySetName", "Missing PropertyName", "Value"
+                    };
 
-            ISheet missedPropertiesSheet = workbook.CreateSheet("Missed properties");
-            WriteAllData(missedPropertiesSheet, mainHeaders, ifcFilesMissingProperties);
+            ISheet missedPropertiesSheet = workbook.CreateSheet("Missing properties check");
+            WriteAllData(missedPropertiesSheet, missingPropertiesHeaders, ifcFilesMissingProperties);
 
-            ISheet filteredPropertiesSheet = workbook.CreateSheet("Filtered Properties");
-            WriteAllData(filteredPropertiesSheet, mainHeaders, filteredIfcFiles);
-
-            ISheet emptyValuesSheet = workbook.CreateSheet("Empty Values Data");
+            ISheet emptyValuesSheet = workbook.CreateSheet("Empty property values check");
             WriteAllData(emptyValuesSheet, mainHeaders, ifcFileWithEmptyValues);
 
-            ISheet picklistCheckSheet = workbook.CreateSheet("Picklist Check");
+            ISheet picklistCheckSheet = workbook.CreateSheet("Picklist check");
             WriteAllDataPicklist(picklistCheckSheet, picklistHeaders, ifcFilesPicklistCheck);
 
-            ISheet nonMatchSheet = workbook.CreateSheet("Picklist Groups Check");
+            ISheet nonMatchSheet = workbook.CreateSheet("Wrong picklist match check");
             WriteAllData(nonMatchSheet, mainHeaders, ifcFileNonMatchList);
 
-            ISheet wrongExpressionsShseet = workbook.CreateSheet("Wrong Expressions");
+            ISheet wrongExpressionsShseet = workbook.CreateSheet("Wrong expressions check");
             WriteAllData(wrongExpressionsShseet, mainHeaders, ifcFileExpressions);
 
-            ISheet wrongLayerMappings = workbook.CreateSheet("Wrong layer mappings");
+            ISheet wrongLayerMappings = workbook.CreateSheet("Wrong layer mappings check");
             WriteAllData(wrongLayerMappings, mainHeaders, wrongMappings);
+
+            ISheet wrongComposedDataSheet = workbook.CreateSheet("Wrong composed data check");
+            WriteAllData(wrongComposedDataSheet, mainHeaders, wrongComposedData);
 
             // --- Save to disk ---
             using (var fs = new FileStream(ReportFilePath, FileMode.Create, FileAccess.Write))
