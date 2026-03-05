@@ -7,6 +7,7 @@ using RevitIfcManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static NPOI.HSSF.UserModel.HeaderFooter;
 
 namespace RevitIfcManager.EventHandlers
 {
@@ -16,29 +17,58 @@ namespace RevitIfcManager.EventHandlers
         {
             try
             {
-                using (Transaction transaction = new Transaction(app.ActiveUIDocument.Document, "Change values"))
+                using (TransactionGroup transactionGroup = new TransactionGroup(app.ActiveUIDocument.Document, "Elements values update"))
                 {
-                    transaction.Start();
+                    transactionGroup.Start();
 
-                    foreach (PropertyField field in options.ChangedFields)
+
+                    using (Transaction transaction = new Transaction(app.ActiveUIDocument.Document, "Parameters values change"))
                     {
-                        foreach (var element in options.Elements)
+                        transaction.Start();
+
+                        if (!options.UpdateAllValues)
                         {
-                            Parameter parameter = element.LookupParameter(field.Name);
-
-                            if (parameter == null)
+                            foreach (PropertyField field in options.ChangedFields)
                             {
-                                continue;
-                            }
+                                foreach (var element in options.Elements)
+                                {
+                                    Parameter parameter = element.LookupParameter(field.Name);
 
-                            parameter.TryParseAndSet(field?.Value?.ToString());
+                                    if (parameter == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    parameter.TryParseAndSet(field?.Value?.ToString());
+                                }
+                            }
                         }
+
+                        transaction.Commit();
                     }
 
-                    ApplyExpressions(options);
-                    ApplyComposed(options);
-                    ApplyExactMatches(options);
-                    transaction.Commit();
+                    using (Transaction transaction = new Transaction(app.ActiveUIDocument.Document, "Apply exact matches"))
+                    {
+                        transaction.Start();
+                        ApplyExactMatches(options);
+                        transaction.Commit();
+                    }
+
+                    using (Transaction transaction = new Transaction(app.ActiveUIDocument.Document, "Apply expressions"))
+                    {
+                        transaction.Start();
+                        ApplyExpressions(options);
+                        transaction.Commit();
+                    }
+
+                    using (Transaction transaction = new Transaction(app.ActiveUIDocument.Document, "Apply composed"))
+                    {
+                        transaction.Start();
+                        ApplyComposed(options);
+                        transaction.Commit();
+                    }
+
+                    transactionGroup.Assimilate();
                 }
             }
             catch (Exception exception)
@@ -50,51 +80,59 @@ namespace RevitIfcManager.EventHandlers
         {
             foreach (PropertyField changedField in options.ChangedFields)
             {
-                foreach (ComposedPropertyItem composedItem in options.ComposedItems)
+                foreach (Element element in options.Elements)
                 {
-                    ComposerPropertyResult result = ComposedItemEvaluator.GetComposedValue(changedField, options.Fields.ToList(), composedItem);
-
-                    if (!result.CanBeComposed)
+                    foreach (ComposedPropertyItem composedItem in options.ComposedItems)
                     {
-                        continue;
-                    }
+                        List<string> propertyNamesToCompose = ComposedItemEvaluator.GetPropertyNames(composedItem.Formula);
 
-                    result.ComposingField.Value = result.Value;
-
-                    foreach (Element element in options.Elements)
-                    {
-                        Parameter parameter = element.LookupParameter(result.ComposingField.Name);
-
-                        if (parameter != null)
+                        if (!propertyNamesToCompose.Contains(changedField.Name))
                         {
-                            parameter.TryParseAndSet(result.Value);
+                            continue;
                         }
+
+                        PropertyField composingField = options.Fields.FirstOrDefault(item => item.Name == composedItem.ComposedPropertyName);
+
+                        if (composingField == null)
+                        {
+                            continue;
+                        }
+
+                        List<PropertyField> fieldsToCompose = options.Fields.Where(item => propertyNamesToCompose.Contains(item.Name)).ToList();
+
+                        Dictionary<string, string> propertyAndValuesToCompose = fieldsToCompose.ToDictionary(item => item.Name, item => element?.LookupParameter(item.Name)?.AsValueString());
+
+                        string value = ComposedItemEvaluator.Resolve(composedItem, propertyAndValuesToCompose);
+
+                        composingField.Value = value;
+
+                        Parameter parameter = element.LookupParameter(composingField.Name);
+
+                        parameter.TryParseAndSet(value);
                     }
                 }
             }
         }
 
-
-
         private void ApplyExactMatches(ParametersTagElementsOptions options)
         {
             foreach (PropertyField changedField in options.ChangedFields)
             {
-                string changedFieldValue = changedField.Value?.ToString() ?? string.Empty;
-
-                PropertyValueMatch propertyValueMatch = options.PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == changedFieldValue);
-
-                if (propertyValueMatch == null)
-                {
-                    continue;
-                }
-
-                var field = options.Fields.FirstOrDefault(item => item.Name == propertyValueMatch.PropertyNameTarget);
-
-                field.Value = propertyValueMatch.PropertyValueTarget;
-
                 foreach (Element element in options.Elements)
                 {
+                    string value = element.LookupParameter(changedField.Name)?.AsValueString() ?? string.Empty;
+
+                    PropertyValueMatch propertyValueMatch = options.PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == value);
+
+                    if (propertyValueMatch == null)
+                    {
+                        continue;
+                    }
+
+                    var field = options.Fields.FirstOrDefault(item => item.Name == propertyValueMatch.PropertyNameTarget);
+
+                    field.Value = propertyValueMatch.PropertyValueTarget;
+
                     Parameter parameter = element.LookupParameter(field.Name);
 
                     if (parameter != null)
@@ -118,23 +156,25 @@ namespace RevitIfcManager.EventHandlers
 
                 List<ExpressionItem> relatedExpressions = options.Expressions.Where(item => item.SourcePropertyName == changedField.Name).ToList();
 
-                foreach (var expression in relatedExpressions)
+                foreach (Element element in options.Elements)
                 {
-                    PropertyField targetField = options.Fields.FirstOrDefault(f => f.Name == expression.TargetPropertyName);
-
-                    if (targetField == null)
+                    foreach (var expression in relatedExpressions)
                     {
-                        continue;
-                    }
+                        PropertyField targetField = options.Fields.FirstOrDefault(f => f.Name == expression.TargetPropertyName);
 
-                    try
-                    {
-                        targetField.Value = ExpressionEvaluator.Evaluate(expression, changedField.Value);
-                        targetField.CanBeEdited = false;
-                        targetField.IsReadOnly = true;
-
-                        foreach (Element element in options.Elements)
+                        if (targetField == null)
                         {
+                            continue;
+                        }
+
+                        try
+                        {
+                            object value = element.LookupParameter(changedField.Name)?.GetValueAsObject();
+
+                            targetField.Value = ExpressionEvaluator.Evaluate(expression, changedField.Value);
+                            targetField.CanBeEdited = false;
+                            targetField.IsReadOnly = true;
+
                             Parameter parameter = element.LookupParameter(targetField.Name);
 
                             if (parameter != null)
@@ -142,9 +182,9 @@ namespace RevitIfcManager.EventHandlers
                                 parameter.TryParseAndSet(targetField.Value.ToString());
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                        catch (Exception ex)
+                        {
+                        }
                     }
                 }
             }

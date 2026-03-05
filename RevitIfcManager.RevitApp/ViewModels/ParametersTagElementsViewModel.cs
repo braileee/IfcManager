@@ -61,8 +61,23 @@ namespace RevitIfcManager.ViewModels
             uiapp.SelectionChanged += SelectionChanged;
 
             ApplyCommand = new DelegateCommand(OnApplyCommand);
+            UpdateValuesCommand = new DelegateCommand(OnUpdateValuesCommand);
 
             ParametersTagElementsEventHandler = new ParametersTagElementsEventHandler();
+        }
+
+        private void OnUpdateValuesCommand()
+        {
+            ParametersTagElementsEventHandler.Raise(new ParametersTagElementsOptions
+            {
+                Elements = SelectedElements,
+                ChangedFields = Fields.ToList(),
+                Fields = Fields,
+                Expressions = Expressions,
+                ComposedItems = ComposedItems,
+                PropertyValueExactMatches = PropertyValueExactMatches,
+                UpdateAllValues = true,
+            });
         }
 
         private void FieldsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -185,7 +200,8 @@ namespace RevitIfcManager.ViewModels
                 Fields = Fields,
                 Expressions = Expressions,
                 ComposedItems = ComposedItems,
-                PropertyValueExactMatches = PropertyValueExactMatches
+                PropertyValueExactMatches = PropertyValueExactMatches,
+                UpdateAllValues = false,
             });
         }
 
@@ -305,6 +321,7 @@ namespace RevitIfcManager.ViewModels
             }
         }
         public DelegateCommand ApplyCommand { get; }
+        public DelegateCommand UpdateValuesCommand { get; }
         public ParametersTagElementsEventHandler ParametersTagElementsEventHandler { get; }
 
         public List<Element> SelectedElements

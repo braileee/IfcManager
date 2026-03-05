@@ -76,9 +76,16 @@
       Command="{Binding UpdateSelectionCommand}" 
       Margin="4" 
       HorizontalAlignment="Left" Width="100"/>
-        <Button Content="Apply" 
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Apply" 
               Command="{Binding ApplyCommand}" 
               Margin="4" 
               HorizontalAlignment="Left" Width="100"/>
+
+            <Button Content="Update Values" 
+                       Command="{Binding UpdateValuesCommand}" 
+                       Margin="4" 
+                       HorizontalAlignment="Left" Width="150"/>
+        </StackPanel>
     </StackPanel>
 </Window>

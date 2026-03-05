@@ -17,5 +17,6 @@ namespace RevitIfcManager.Models
         public ObservableCollection<PropertyField> Fields { get; internal set; } = new ObservableCollection<PropertyField>();
         public List<ComposedPropertyItem> ComposedItems { get; set; } = new List<ComposedPropertyItem>();
         public List<PropertyValueMatch> PropertyValueExactMatches { get; set; } = new List<PropertyValueMatch>();
+        public bool UpdateAllValues { get; internal set; }
     }
 }

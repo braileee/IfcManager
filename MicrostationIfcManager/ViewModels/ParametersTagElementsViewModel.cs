@@ -29,6 +29,8 @@ namespace MicrostationIfcManager.ViewModels
             ApplyCommand = new DelegateCommand(OnApplyCommand);
             UpdateSelectionCommand = new DelegateCommand(OnUpdateSelectionCommand);
 
+            UpdateValuesCommand = new DelegateCommand(OnUpdateValuesCommand);
+
             DgnFile = dgnFile;
             SettingsRoot = settingsRoot;
             PropertySetItems = propertySetItems;
@@ -41,6 +43,21 @@ namespace MicrostationIfcManager.ViewModels
             ComposedItems = composedPropertyItems;
             PropertyValueExactMatches = propertyValueExactMatches;
             LoadFields();
+        }
+
+        private void OnUpdateValuesCommand()
+        {
+            try
+            {
+                ParametersUpdater parametersUpdater = new ParametersUpdater(SelectedElements, Fields.ToList(), Fields.ToList(), ExpressionItems, ComposedItems, PropertyValueExactMatches);
+                parametersUpdater.UpdateComposedAndExpressionValues();
+
+                OnUpdateSelectionCommand();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error updating values. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void OnUpdateSelectionCommand()
@@ -245,6 +262,8 @@ namespace MicrostationIfcManager.ViewModels
 
                 ParametersUpdater parametersUpdater = new ParametersUpdater(SelectedElements, changedFields, Fields.ToList(), ExpressionItems, ComposedItems, PropertyValueExactMatches);
                 parametersUpdater.Update();
+
+                OnUpdateSelectionCommand();
             }
             catch (Exception)
             {
@@ -294,6 +313,7 @@ namespace MicrostationIfcManager.ViewModels
         }
         public DelegateCommand ApplyCommand { get; }
         public DelegateCommand UpdateSelectionCommand { get; }
+        public DelegateCommand UpdateValuesCommand { get; }
         public DelegateCommand SelectElementsCommand { get; }
 
         private string selectedElementsInfo;

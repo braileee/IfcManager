@@ -27,6 +27,8 @@ namespace MicrostationIfcManager.Models
         public List<ComposedPropertyItem> ComposedItems { get; set; } = new List<ComposedPropertyItem>();
         public List<PropertyValueMatch> PropertyValueExactMatches { get; } = new List<PropertyValueMatch>();
 
+        public List<PropertyField> AdditionalChangedFields { get; set; } = new List<PropertyField>();
+
         public void Update()
         {
             foreach (PropertyField field in ChangedFields)
@@ -38,100 +40,117 @@ namespace MicrostationIfcManager.Models
                 }
             }
 
-            ApplyExactMatches();
-
-            ApplyExpressions();
-            ApplyComposed();
+            ApplyExactMatches(ChangedFields);
+            ApplyExpressions(ChangedFields, AdditionalChangedFields);
+            ApplyComposed(ChangedFields, AdditionalChangedFields);
         }
 
-        private void ApplyExactMatches()
+        public void UpdateComposedAndExpressionValues()
         {
-            foreach (PropertyField changedField in ChangedFields)
+            ApplyExactMatches(ChangedFields);
+            ApplyExpressions(ChangedFields, AdditionalChangedFields);
+            ApplyComposed(ChangedFields, AdditionalChangedFields);
+        }
+
+        private void ApplyExactMatches(List<PropertyField> fields)
+        {
+            foreach (PropertyField changedField in fields)
             {
-                string changedFieldValue = changedField.Value?.ToString() ?? string.Empty;
-
-                PropertyValueMatch propertyValueMatch = PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == changedFieldValue);
-
-                if(propertyValueMatch == null)
-                {
-                    continue;
-                }
-
-                var field = Fields.FirstOrDefault(item => item.Name == propertyValueMatch.PropertyNameTarget);
-
-                field.Value = propertyValueMatch.PropertyValueTarget;
                 foreach (Element element in Elements)
                 {
+                    string elementValue = element?.GetValue(changedField.Name)?.ToString() ?? string.Empty;
+
+                    PropertyValueMatch propertyValueMatch = PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == elementValue);
+
+                    if (propertyValueMatch == null)
+                    {
+                        continue;
+                    }
+
+                    var field = Fields.FirstOrDefault(item => item.Name == propertyValueMatch.PropertyNameTarget);
+
+                    field.Value = propertyValueMatch.PropertyValueTarget;
+
                     element.SetValue(field.Name, propertyValueMatch.PropertyValueTarget);
+                    AdditionalChangedFields.Add(field);
                 }
             }
         }
 
-        private void ApplyComposed()
+        private void ApplyComposed(List<PropertyField> fields, List<PropertyField> additionalChangedFields)
         {
-            foreach (PropertyField changedField in ChangedFields)
+            List<PropertyField> allChangedFields = new List<PropertyField>();
+            allChangedFields.AddRange(fields);
+            allChangedFields.AddRange(additionalChangedFields);
+
+            foreach (PropertyField changedField in allChangedFields)
             {
-                foreach (var composedItem in ComposedItems)
+                foreach (Element element in Elements)
                 {
-                    List<string> propertyNamesToCompose = ComposedItemEvaluator.GetPropertyNames(composedItem.Formula);
-
-                    if (!propertyNamesToCompose.Contains(changedField.Name))
+                    foreach (var composedItem in ComposedItems)
                     {
-                        continue;
-                    }
+                        List<string> propertyNamesToCompose = ComposedItemEvaluator.GetPropertyNames(composedItem.Formula);
 
-                    PropertyField composingField = Fields.FirstOrDefault(item => item.Name == composedItem.ComposedPropertyName);
+                        if (!propertyNamesToCompose.Contains(changedField.Name))
+                        {
+                            continue;
+                        }
 
-                    if (composingField == null)
-                    {
-                        continue;
-                    }
+                        PropertyField composingField = Fields.FirstOrDefault(item => item.Name == composedItem.ComposedPropertyName);
 
-                    List<PropertyField> fieldsToCompose = Fields.Where(item => propertyNamesToCompose.Contains(item.Name)).ToList();
+                        if (composingField == null)
+                        {
+                            continue;
+                        }
 
-                    Dictionary<string, string> propertyAndValuesToCompose = fieldsToCompose.ToDictionary(item => item.Name, item => item?.Value?.ToString());
+                        List<PropertyField> fieldsToCompose = Fields.Where(item => propertyNamesToCompose.Contains(item.Name)).ToList();
 
-                    string value = ComposedItemEvaluator.Resolve(composedItem.Formula, propertyAndValuesToCompose);
+                        Dictionary<string, string> propertyAndValuesToCompose = fieldsToCompose.ToDictionary(item => item.Name, item => element?.GetValue(item.Name)?.ToString());
 
-                    composingField.Value = value;
+                        string value = ComposedItemEvaluator.Resolve(composedItem.Formula, propertyAndValuesToCompose);
 
-                    foreach (Element element in Elements)
-                    {
+                        composingField.Value = value;
+
                         element.SetValue(composingField.Name, value);
                     }
                 }
             }
         }
 
-        private void ApplyExpressions()
+        private void ApplyExpressions(List<PropertyField> fields, List<PropertyField> additionalChangedFields)
         {
+            List<PropertyField> allChangedFields = new List<PropertyField>();
+            allChangedFields.AddRange(fields);
+            allChangedFields.AddRange(additionalChangedFields);
+
             List<string> sourceParameterNames = ExpressionItems.Select(item => item.SourcePropertyName).Distinct().ToList();
 
-            foreach (var changedField in ChangedFields)
+            foreach (var changedField in allChangedFields)
             {
-                if (!sourceParameterNames.Contains(changedField.Name))
+                foreach (Element element in Elements)
                 {
-                    continue;
-                }
-
-                List<ExpressionItem> expressions = ExpressionItems.Where(item => item.SourcePropertyName == changedField.Name).ToList();
-
-                foreach (var expression in expressions)
-                {
-                    PropertyField targetField = Fields.FirstOrDefault(f => f.Name == expression.TargetPropertyName);
-
-                    if (targetField == null)
+                    if (!sourceParameterNames.Contains(changedField.Name))
                     {
                         continue;
                     }
 
+                    List<ExpressionItem> expressions = ExpressionItems.Where(item => item.SourcePropertyName == changedField.Name).ToList();
 
-                    targetField.Value = ExpressionEvaluator.Evaluate(expression, changedField.Value);
-                    targetField.CanBeEdited = false;
-                    targetField.IsReadOnly = true;
-
-                    foreach (Element element in Elements)
+                    foreach (var expression in expressions)
                     {
+                        PropertyField targetField = Fields.FirstOrDefault(f => f.Name == expression.TargetPropertyName);
+
+                        if (targetField == null)
+                        {
+                            continue;
+                        }
+
+                        object value = element.GetValue(changedField.Name);
+
+                        targetField.Value = ExpressionEvaluator.Evaluate(expression, value);
+                        targetField.CanBeEdited = false;
+                        targetField.IsReadOnly = true;
+
                         element.SetValue(targetField.Name, targetField.Value?.ToString());
                     }
                 }
