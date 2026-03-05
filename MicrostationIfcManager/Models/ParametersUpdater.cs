@@ -107,7 +107,7 @@ namespace MicrostationIfcManager.Models
 
                         Dictionary<string, string> propertyAndValuesToCompose = fieldsToCompose.ToDictionary(item => item.Name, item => element?.GetValue(item.Name)?.ToString());
 
-                        string value = ComposedItemEvaluator.Resolve(composedItem.Formula, propertyAndValuesToCompose);
+                        string value = ComposedItemEvaluator.Resolve(composedItem, propertyAndValuesToCompose);
 
                         composingField.Value = value;
 
