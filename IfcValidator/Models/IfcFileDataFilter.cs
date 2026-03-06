@@ -149,9 +149,11 @@ namespace IfcValidator.Models
 
                 foreach (IfcElement ifcElement in ifcFile.IfcElements)
                 {
+                    string guid = ifcElement?.Guid.Value?.ToString();
+
                     IfcElement ifcElementUpdated = new IfcElement
                     {
-                        Guid = ifcElement.Guid,
+                        Guid = guid,
                         IfcEntity = ifcElement.IfcEntity,
                         IfcProperties = new List<IfcProperty>(),
                         Layer = ifcElement.Layer,
@@ -160,6 +162,8 @@ namespace IfcValidator.Models
 
                     foreach (IfcProperty ifcProperty in ifcElement.IfcProperties)
                     {
+                        string ifcPropertyName = ifcProperty.PropertyName;
+
                         PicklistGroup picklistGroup = picklistGroups.FirstOrDefault(item => item.GroupName == ifcProperty.PropertyName);
 
                         if (picklistGroup == null)
@@ -260,7 +264,7 @@ namespace IfcValidator.Models
                         }
 
 
-                        IfcProperty ifcPropertyTarget = ifcElement.IfcProperties.FirstOrDefault(item => item.PropertyName == propertyValueMatches[0].PropertyNameTarget);
+                        IfcProperty ifcPropertyTarget = ifcElement.IfcProperties.FirstOrDefault(item => item.PropertyName == sourcePropertyValueMatches[0].PropertyNameTarget);
                         string assignedTargetProperty = ifcPropertyTarget?.Value?.ToString();
 
                         IfcProperty ifcPropertyUpdated = new IfcProperty
@@ -338,6 +342,7 @@ namespace IfcValidator.Models
 
                             if (targetValue != evaluatedValueString)
                             {
+                                ifcElementUpdated.IfcProperties.Add(sourceProperty);
                                 ifcElementUpdated.IfcProperties.Add(targetProperty);
                             }
                         }
