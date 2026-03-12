@@ -4,6 +4,7 @@ using IfcManager.BL.Models;
 using PSURevitApps.Core;
 using PSURevitApps.Core.Models;
 using RevitIfcManager.Models;
+using RevitIfcManager.RevitApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +71,9 @@ namespace RevitIfcManager.EventHandlers
 
                     transactionGroup.Assimilate();
                 }
+
+                FieldsRefresh fieldsRefresh = new FieldsRefresh(options.Fields.ToList(), options.Elements);
+                fieldsRefresh.Start();
             }
             catch (Exception exception)
             {
@@ -171,7 +175,7 @@ namespace RevitIfcManager.EventHandlers
                         {
                             object value = element.LookupParameter(changedField.Name)?.GetValueAsObject();
 
-                            targetField.Value = ExpressionEvaluator.Evaluate(expression, changedField.Value);
+                            targetField.Value = ExpressionEvaluator.Evaluate(expression, value);
                             targetField.CanBeEdited = false;
                             targetField.IsReadOnly = true;
 

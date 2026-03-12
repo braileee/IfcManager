@@ -10,6 +10,7 @@ using Prism.Mvvm;
 using PSURevitApps.Core;
 using RevitIfcManager.EventHandlers;
 using RevitIfcManager.Models;
+using RevitIfcManager.RevitApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -207,16 +208,23 @@ namespace RevitIfcManager.ViewModels
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            bool flowControl = UpdatedFields();
+            if (!flowControl)
+            {
+                return;
+            }
+        }
+
+        private bool UpdatedFields()
+        {
             if (Fields == null || Fields.Count == 0)
             {
                 LoadFields();
             }
 
-            string variesValue = "***VARIES***";
-
-            if(Uiapp.ActiveUIDocument == null)
+            if (Uiapp.ActiveUIDocument == null)
             {
-                return;
+                return false;
             }
 
             var selectedIds = Uiapp.ActiveUIDocument.Selection.GetElementIds();
@@ -230,63 +238,15 @@ namespace RevitIfcManager.ViewModels
                 {
                     field.Value = null;
                 }
-                return;
+                return false;
             }
 
             SelectedElements = selectedIds.Select(id => Uiapp.ActiveUIDocument.Document.GetElement(id)).ToList();
 
-            foreach (PropertyField propertyField in Fields)
-            {
-                EditorType editorType = propertyField.EditorType;
-                Element firstElement = SelectedElements.FirstOrDefault();
+            FieldsRefresh fieldsRefresh = new FieldsRefresh(Fields.ToList(), SelectedElements);
+            fieldsRefresh.Start();
 
-                string propertyName = propertyField.Name;
-
-                object firstElementValue = firstElement?.LookupParameter(propertyField.Name)?.GetValueAsObject();
-                object firstElementValueString = firstElementValue?.ToString() ?? string.Empty;
-
-                bool allValuesSame = SelectedElements.Where(item => item.LookupParameter(propertyField.Name) != null).All(element =>
-                {
-                    string currentStringValue = element.LookupParameter(propertyField.Name)?.GetValueAsObject()?.ToString();
-                    currentStringValue = currentStringValue ?? string.Empty;
-
-                    return currentStringValue.Equals(firstElementValueString);
-                });
-
-                if (allValuesSame)
-                {
-                    if (propertyField.EditorType == EditorType.Bool)
-                    {
-                        propertyField.Value = firstElementValue?.ToString() == "1" ? true : false;
-                    }
-                    else
-                    {
-                        propertyField.Value = firstElementValue;
-                    }
-
-                    if(propertyField.EditorType == EditorType.Combo)
-                    {
-                        if (propertyField.LookupValues.Contains(variesValue))
-                        {
-                            propertyField.LookupValues.Remove(variesValue);
-                        }
-                    }
-                }
-                else
-                {
-                    if (propertyField.EditorType == EditorType.Combo)
-                    {
-                        if (!propertyField.LookupValues.Contains(variesValue))
-                        {
-                            propertyField.LookupValues.Add(variesValue);
-                        }
-                    }
-
-                    propertyField.Value = variesValue;
-                }
-
-                propertyField.Changed = false;
-            }
+            return true;
         }
 
         public UIApplication Uiapp { get; }
