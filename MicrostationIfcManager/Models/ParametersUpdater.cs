@@ -60,7 +60,8 @@ namespace MicrostationIfcManager.Models
                 {
                     string elementValue = element?.GetValue(changedField.Name)?.ToString() ?? string.Empty;
 
-                    PropertyValueMatch propertyValueMatch = PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == elementValue);
+                    //PropertyValueMatch propertyValueMatch = PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == elementValue);
+                    PropertyValueMatch propertyValueMatch = PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameAndValuesSource.ContainsKey(changedField.Name) && item.PropertyNameAndValuesSource.Values.Contains(elementValue));
 
                     if (propertyValueMatch == null)
                     {

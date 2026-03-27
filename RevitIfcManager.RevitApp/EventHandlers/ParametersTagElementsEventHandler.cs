@@ -8,7 +8,6 @@ using RevitIfcManager.RevitApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static NPOI.HSSF.UserModel.HeaderFooter;
 
 namespace RevitIfcManager.EventHandlers
 {
@@ -126,7 +125,7 @@ namespace RevitIfcManager.EventHandlers
                 {
                     string value = element.LookupParameter(changedField.Name)?.AsValueString() ?? string.Empty;
 
-                    PropertyValueMatch propertyValueMatch = options.PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameSource == changedField.Name && item.PropertyValueSource == value);
+                    PropertyValueMatch propertyValueMatch = options.PropertyValueExactMatches.FirstOrDefault(item => item.PropertyNameAndValuesSource.ContainsKey(changedField.Name) && item.PropertyNameAndValuesSource.Values.Contains(value));
 
                     if (propertyValueMatch == null)
                     {

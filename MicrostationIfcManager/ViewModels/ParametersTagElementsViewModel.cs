@@ -164,46 +164,48 @@ namespace MicrostationIfcManager.ViewModels
                 return;
             }
 
-            List<PropertyValueMatch> sourceMatches = PropertyValueMatches.Where(item => item.PropertyNameSource == changedField.Name).ToList();
+            PropertyField.ReloadChangedFields(changedField, Fields, PropertyValueMatches);
 
-            if (sourceMatches.Count == 0)
-            {
-                return;
-            }
+            //List<PropertyValueMatch> sourceMatches = PropertyValueMatches.Where(item => item.PropertyNameSource == changedField.Name).ToList();
 
-            List<string> targetPropertyNames = sourceMatches.Select(item => item.PropertyNameTarget).Distinct().ToList();
-            List<string> sourcePropertyNames = sourceMatches.Select(item => item.PropertyNameSource).Distinct().ToList();
+            //if (sourceMatches.Count == 0)
+            //{
+            //    return;
+            //}
 
-            foreach (PropertyField field in Fields)
-            {
-                if (field.LookupValues == null || field.Name == changedField.Name)
-                {
-                    continue;
-                }
+            //List<string> targetPropertyNames = sourceMatches.Select(item => item.PropertyNameTarget).Distinct().ToList();
+            //List<string> sourcePropertyNames = sourceMatches.Select(item => item.PropertyNameSource).Distinct().ToList();
 
-                if (field.LookupValues.Count == 0)
-                {
-                    field.LookupValues.AddRange(field.SourceLookupValues);
-                    continue;
-                }
+            //foreach (PropertyField field in Fields)
+            //{
+            //    if (field.LookupValues == null || field.Name == changedField.Name)
+            //    {
+            //        continue;
+            //    }
 
-                if (!targetPropertyNames.Contains(field.Name))
-                {
-                    continue;
-                }
+            //    if (field.LookupValues.Count == 0)
+            //    {
+            //        field.LookupValues.AddRange(field.SourceLookupValues);
+            //        continue;
+            //    }
 
-                List<PropertyValueMatch> targetMatches = sourceMatches.Where(item => item.PropertyNameTarget == field.Name).ToList();
-                List<PropertyValueMatch> sourceMatchValueItems = sourceMatches.Where(item => item.PropertyValueSource == changedField.Value?.ToString()).ToList();
-                List<string> targetMatchesValues = sourceMatchValueItems.Select(item => item.PropertyValueTarget).ToList();
+            //    if (!targetPropertyNames.Contains(field.Name))
+            //    {
+            //        continue;
+            //    }
 
-                List<string> lookupValues = targetMatchesValues.Count > 0 ? targetMatchesValues : field.SourceLookupValues.ToList();
+            //    List<PropertyValueMatch> targetMatches = sourceMatches.Where(item => item.PropertyNameTarget == field.Name).ToList();
+            //    List<PropertyValueMatch> sourceMatchValueItems = sourceMatches.Where(item => item.PropertyValueSource == changedField.Value?.ToString()).ToList();
+            //    List<string> targetMatchesValues = sourceMatchValueItems.Select(item => item.PropertyValueTarget).ToList();
 
-                if (lookupValues.Count > 0)
-                {
-                    field.LookupValues.Clear();
-                    field.LookupValues.AddRange(lookupValues);
-                }
-            }
+            //    List<string> lookupValues = targetMatchesValues.Count > 0 ? targetMatchesValues : field.SourceLookupValues.ToList();
+
+            //    if (lookupValues.Count > 0)
+            //    {
+            //        field.LookupValues.Clear();
+            //        field.LookupValues.AddRange(lookupValues);
+            //    }
+            //}
 
             if (Fields == null || Fields.Count == 0)
             {

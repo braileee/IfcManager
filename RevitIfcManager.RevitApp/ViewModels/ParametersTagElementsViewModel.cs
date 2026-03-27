@@ -96,51 +96,7 @@ namespace RevitIfcManager.ViewModels
         {
             PropertyField changedField = sender as PropertyField;
 
-            if (changedField == null)
-            {
-                return;
-            }
-
-            List<PropertyValueMatch> sourceMatches = PropertyValueMatches.Where(item => item.PropertyNameSource == changedField.Name).ToList();
-
-            if (sourceMatches.Count == 0)
-            {
-                return;
-            }
-
-            List<string> targetPropertyNames = sourceMatches.Select(item => item.PropertyNameTarget).Distinct().ToList();
-            List<string> sourcePropertyNames = sourceMatches.Select(item => item.PropertyNameSource).Distinct().ToList();
-
-            foreach (PropertyField field in Fields)
-            {
-                if (field.LookupValues == null || field.Name == changedField.Name)
-                {
-                    continue;
-                }
-
-                if (field.LookupValues.Count == 0)
-                {
-                    field.LookupValues.AddRange(field.SourceLookupValues);
-                    continue;
-                }
-
-                if (!targetPropertyNames.Contains(field.Name))
-                {
-                    continue;
-                }
-
-                List<PropertyValueMatch> targetMatches = sourceMatches.Where(item => item.PropertyNameTarget == field.Name).ToList();
-                List<PropertyValueMatch> sourceMatchValueItems = sourceMatches.Where(item => item.PropertyValueSource == changedField.Value?.ToString()).ToList();
-                List<string> targetMatchesValues = sourceMatchValueItems.Select(item => item.PropertyValueTarget).ToList();
-
-                List<string> lookupValues = targetMatchesValues.Count > 0 ? targetMatchesValues : field.SourceLookupValues.ToList();
-
-                if (lookupValues.Count > 0)
-                {
-                    field.LookupValues.Clear();
-                    field.LookupValues.AddRange(lookupValues);
-                }
-            }
+            PropertyField.ReloadChangedFields(changedField, Fields, PropertyValueMatches);
 
             if (Fields == null || Fields.Count == 0)
             {

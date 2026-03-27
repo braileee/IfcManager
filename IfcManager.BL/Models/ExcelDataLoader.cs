@@ -213,47 +213,69 @@ namespace IfcManager.BL.Models
             }
         }
 
-        public static List<PropertyValueMatch> LoadPropertiesValueMatches(string filePath, PropertyMatchSheet settings)
+        public static List<PropertyValueMatch> LoadPropertiesValueMatches(
+    string filePath,
+    PropertyMatchSheet settings)
         {
-            List<PropertyValueMatch> propertyValueMatches = new List<PropertyValueMatch>();
+            var propertyValueMatches = new List<PropertyValueMatch>();
 
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
                 IWorkbook workbook = new XSSFWorkbook(fs);
 
-                List<string> sheetNames = settings.SheetNames;
-
-                foreach (string sheetName in sheetNames)
+                foreach (string sheetName in settings.SheetNames)
                 {
                     ISheet sheet = workbook.GetSheet(sheetName);
                     if (sheet == null)
-                    {
                         continue;
+
+                    // ---- READ HEADER ----
+                    IRow header = sheet.GetRow(0);
+                    if (header == null)
+                        continue;
+
+                    int lastColIndex = header.LastCellNum - 1;
+
+                    // All source column names (0..last-1)
+                    List<string> sourcePropertyNames = new List<string>();
+                    for (int col = 0; col < lastColIndex; col++)
+                    {
+                        sourcePropertyNames.Add(header.GetCell(col)?.ToString());
                     }
 
-                    // Read header row
-                    IRow header = sheet.GetRow(0);
-                    string propertyNameSource = header.GetCell(0).ToString();
-                    string propertyNameTarget = header.GetCell(1).ToString();
+                    // Target name = last column
+                    string propertyNameTarget = header.GetCell(lastColIndex)?.ToString();
 
-                    // Iterate rows
+                    // ---- READ ROWS ----
                     for (int i = 1; i <= sheet.LastRowNum; i++)
                     {
                         IRow row = sheet.GetRow(i);
-                        if (row == null) continue;
+                        if (row == null)
+                            continue;
 
-                        string valueSource = row.GetCell(0)?.ToString();
-                        string valueTarget = row.GetCell(1)?.ToString();
+                        string targetValue = row.GetCell(lastColIndex)?.ToString();
+                        if (string.IsNullOrWhiteSpace(targetValue))
+                            continue;
 
-                        if (string.IsNullOrWhiteSpace(valueSource) || string.IsNullOrWhiteSpace(valueTarget))
+                        // Build dictionary of all source columns that have values
+                        var sourceDict = new Dictionary<string, string>();
+
+                        for (int col = 0; col < lastColIndex; col++)
+                        {
+                            string valueSource = row.GetCell(col)?.ToString();
+
+                            if (!string.IsNullOrWhiteSpace(valueSource))
+                                sourceDict[sourcePropertyNames[col]] = valueSource;
+                        }
+
+                        if (sourceDict.Count == 0)
                             continue;
 
                         propertyValueMatches.Add(new PropertyValueMatch
                         {
-                            PropertyNameSource = propertyNameSource,
-                            PropertyValueSource = valueSource,
+                            PropertyNameAndValuesSource = sourceDict,
                             PropertyNameTarget = propertyNameTarget,
-                            PropertyValueTarget = valueTarget
+                            PropertyValueTarget = targetValue
                         });
                     }
                 }
@@ -409,8 +431,7 @@ namespace IfcManager.BL.Models
 
                         propertyValueMatches.Add(new PropertyValueMatch
                         {
-                            PropertyNameSource = propertyNameSource,
-                            PropertyValueSource = valueSource,
+                            PropertyNameAndValuesSource = new Dictionary<string, string> { { propertyNameSource, valueSource } },
                             PropertyNameTarget = propertyNameTarget,
                             PropertyValueTarget = valueTarget
                         });

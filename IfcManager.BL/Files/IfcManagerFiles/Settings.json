@@ -23,7 +23,8 @@
             "PropertyMatchSheet": {
                   "HeaderRowIndex": 0,
                   "SheetNames": [
-                        "LocationRoot Match"
+                        "LocationRoot Match",
+                        "SpaceID Match"
                   ],
             },
             "PropertyExactMatchSheet": {

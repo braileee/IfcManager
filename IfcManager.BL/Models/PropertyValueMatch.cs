@@ -8,8 +8,9 @@ namespace IfcManager.BL.Models
 {
     public class PropertyValueMatch
     {
-        public string PropertyNameSource { get; set; }
-        public string PropertyValueSource { get; set; }
+
+        public Dictionary<string, string> PropertyNameAndValuesSource { get; set; } = new Dictionary<string, string>();
+
         public string PropertyNameTarget { get; set; }
         public string PropertyValueTarget { get; set; }
     }
