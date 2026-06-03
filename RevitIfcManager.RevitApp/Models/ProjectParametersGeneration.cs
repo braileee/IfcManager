@@ -5,7 +5,6 @@ using IfcManager.BL.Models;
 using PSURevitApps.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,23 +29,25 @@ namespace RevitIfcManager.Models
 
             var categories = doc.GetUsedBoundModelCategories(excludedCategories);
 
-            using var tx = new Transaction(doc, "Create Project Parameters");
-            tx.Start();
-
-            List<PropertyItem> properties = propertySets.SelectMany(ps => ps.PropertyItems).ToList();
-
-            foreach (var prop in properties)
+            using (var tx = new Transaction(doc, "Create Project Parameters"))
             {
-                if(ProjectParameterExists(doc, prop.PropertyName))
+                tx.Start();
+
+                List<PropertyItem> properties = propertySets.SelectMany(ps => ps.PropertyItems).ToList();
+
+                foreach (var prop in properties)
                 {
-                    continue;
+                    if (ProjectParameterExists(doc, prop.PropertyName))
+                    {
+                        continue;
+                    }
+
+                    var specType = RevitTypeMapper.GetSpecType(prop.DataType);
+                    RawCreateProjectParameter(app, prop.PropertyName, specType, true, categories, GroupTypeId.Ifc, true);
                 }
 
-                var specType = RevitTypeMapper.GetSpecType(prop.DataType);
-                RawCreateProjectParameter(app, prop.PropertyName, specType, true, categories, GroupTypeId.Ifc, true);
+                tx.Commit();
             }
-
-            tx.Commit();
         }
 
         private static bool ProjectParameterExists(Document doc, string name)

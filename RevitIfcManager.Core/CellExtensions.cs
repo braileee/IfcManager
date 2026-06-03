@@ -14,20 +14,36 @@ namespace PSURevitApps.Core
             if (cell == null)
                 return null;
 
-            return cell.CellType switch
+            switch (cell.CellType)
             {
-                CellType.Numeric => cell.NumericCellValue,
-                CellType.String => cell.StringCellValue,
-                CellType.Boolean => cell.BooleanCellValue,
-                CellType.Formula => cell.CachedFormulaResultType switch
-                {
-                    CellType.Numeric => cell.NumericCellValue,
-                    CellType.String => cell.StringCellValue,
-                    CellType.Boolean => cell.BooleanCellValue,
-                    _ => null
-                },
-                _ => null
-            };
+                case CellType.Numeric:
+                    return cell.NumericCellValue;
+
+                case CellType.String:
+                    return cell.StringCellValue;
+
+                case CellType.Boolean:
+                    return cell.BooleanCellValue;
+
+                case CellType.Formula:
+                    switch (cell.CachedFormulaResultType)
+                    {
+                        case CellType.Numeric:
+                            return cell.NumericCellValue;
+
+                        case CellType.String:
+                            return cell.StringCellValue;
+
+                        case CellType.Boolean:
+                            return cell.BooleanCellValue;
+
+                        default:
+                            return null;
+                    }
+
+                default:
+                    return null;
+            }
         }
 
         public static string GetCellValueAsString(this ICell cell)

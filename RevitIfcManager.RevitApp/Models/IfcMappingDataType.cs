@@ -16,14 +16,25 @@ namespace RevitIfcManager.Models
                 return "Text";
             }
 
-            return dataType.ToLower() switch
+
+            switch (dataType.ToLower())
             {
-                "string" => "Text",
-                "int" => "Integer",
-                "double" => "Real",
-                "bool" => "Boolean",
-                _ => "Text",
-            };
+                case "string":
+                    return "Text";
+
+                case "int":
+                    return "Integer";
+
+                case "double":
+                    return "Real";
+
+                case "bool":
+                    return "Boolean";
+
+                default:
+                    return "Text";
+            }
+
         }
     }
 }
