@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /IfcManager.Revit.Setup/Build
 /IfcManager.Revit.Setup/wix
+/MicrostationIfcManager.Setup/Build
+/MicrostationIfcManager.Setup/wix
