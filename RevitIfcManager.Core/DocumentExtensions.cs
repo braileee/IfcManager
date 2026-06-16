@@ -24,7 +24,9 @@ namespace PSURevitApps.Core
             {
                 if(excludedCategories != null)
                 {
-                    if (excludedCategories.Contains(e.Category.BuiltInCategory))
+                    BuiltInCategory builtInCategory = (BuiltInCategory)e.Category.Id.IntegerValue;
+
+                    if (excludedCategories.Contains(builtInCategory))
                     {
                         continue;
                     }

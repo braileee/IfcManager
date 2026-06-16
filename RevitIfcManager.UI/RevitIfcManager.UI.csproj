@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Configurations>DebugRevit2022;DebugRevit2023;DebugRevit2024;DebugRevit2025;DebugRevit2026;ReleaseRevit2022;ReleaseRevit2023;ReleaseRevit2024;ReleaseRevit2025;ReleaseRevit2026;DebugRevit2026</Configurations>
+		<Configurations>DebugRevit2023;DebugRevit2024;DebugRevit2025;DebugRevit2026;ReleaseRevit2022;ReleaseRevit2023;ReleaseRevit2024;ReleaseRevit2025;ReleaseRevit2026;DebugRevit2026</Configurations>
 		<OutputType>Library</OutputType>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -44,14 +44,6 @@
 
 	<ItemGroup Condition="'$(Configuration)'=='DebugRevit2023' Or '$(Configuration)'=='ReleaseRevit2023'">
 		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2023.0.0">
-			<IncludeAssets>compile</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="Prism.Wpf" Version="8.1.97" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(Configuration)'=='DebugRevit2022' Or '$(Configuration)'=='ReleaseRevit2022'">
-		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="2022.1.0">
 			<IncludeAssets>compile</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
