@@ -41,7 +41,13 @@ namespace IfcManager.Settings.Models
 
         public PicklistViewModel Parent { get; set; }
 
-        public bool HasErrors => _errors.Any();
+        public bool HasErrors
+        {
+            get
+            {
+                return _errors.Any();
+            }
+        }
 
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
