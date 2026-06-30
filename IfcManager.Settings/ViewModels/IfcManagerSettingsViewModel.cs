@@ -13,12 +13,14 @@ namespace IfcManager.Settings.ViewModels
         public IfcManagerSettingsViewModel()
         {
             Settings = SettingsLoader.LoadExistingOrDefault();
-            PathsViewModel = new PathsViewModel(Settings);
+            PathsViewModel = new PathsViewModel();
             PropertiesViewModel = new PropertiesViewModel(Settings);
+            PicklistViewModel = new PicklistViewModel(Settings);
         }
 
         public SettingsRoot Settings { get; }
-        public PathsViewModel PathsViewModel { get; }
-        public PropertiesViewModel PropertiesViewModel { get; }
+        public PathsViewModel PathsViewModel { get; set; }
+        public PropertiesViewModel PropertiesViewModel { get; set; }
+        public PicklistViewModel PicklistViewModel { get; set; }
     }
 }

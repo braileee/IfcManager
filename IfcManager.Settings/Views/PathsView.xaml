@@ -11,25 +11,25 @@
 
         <StackPanel Orientation="Horizontal">
             <TextBox IsEnabled="False" Text="{Binding SettingsFilePath}" 
-     Margin="2" 
-     Width="900"/>
+                     Margin="2" 
+                     Width="900"/>
             <Button Content="Load Settings" 
-    Margin="2"  
-    Command="{Binding LoadSettingsCommand}"
-    HorizontalAlignment="Left"
-    Width="100"/>
+                    Margin="2"  
+                    Command="{Binding LoadSettingsCommand}"
+                    HorizontalAlignment="Left"
+                    Width="100"/>
         </StackPanel>
 
         <Label Content="Source Excel (xlsx)" Margin="2"/>
         <StackPanel Orientation="Horizontal">
             <TextBox IsEnabled="False" Text="{Binding ExcelFilePath}" 
- Margin="2" 
- Width="900"/>
+                     Margin="2" 
+                     Width="900"/>
             <Button Content="Load Excel" 
-Margin="2"  
-Command="{Binding LoadExcelCommand}"
-HorizontalAlignment="Left"
-Width="100"/>
+                    Margin="2"  
+                    Command="{Binding LoadExcelCommand}"
+                    HorizontalAlignment="Left"
+                    Width="100"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

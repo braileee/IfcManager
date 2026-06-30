@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IfcManager.Settings.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,35 @@ namespace IfcManager.Settings.Views
         public IfcManagerSettingsView()
         {
             InitializeComponent();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+            IfcManagerSettingsViewModel ifcManagerSettingsViewModel = DataContext as IfcManagerSettingsViewModel;
+
+            if(ifcManagerSettingsViewModel == null)
+            {
+                return;
+            }
+
+            if (ifcManagerSettingsViewModel.PropertiesViewModel.HasUnsavedChanges)
+            {
+                var result = MessageBox.Show(
+                    "You have unsaved changes. Do you want to save before closing?",
+                    "Unsaved Changes",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    ifcManagerSettingsViewModel.PropertiesViewModel.SaveCommand.Execute();
+                }
+                else if (result == MessageBoxResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }

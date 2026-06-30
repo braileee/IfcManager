@@ -77,6 +77,52 @@ namespace IfcManager.BL.Models
 
         }
 
+        public static void SavePropertySetItems(string filePath, PropertiesSheet settings, List<PropertySetItem> propertySets)
+        {
+            IWorkbook workbook;
+
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                workbook = new XSSFWorkbook(fs);
+            }
+
+            var sheet = workbook.GetSheet(settings.SheetName) ?? workbook.CreateSheet(settings.SheetName);
+
+            // Clear sheet
+            for (int i = sheet.LastRowNum; i >= 0; i--)
+            {
+                var row = sheet.GetRow(i);
+                if (row != null)
+                    sheet.RemoveRow(row);
+            }
+
+            int headerRowIndex = settings.HeaderRowIndex;
+            var headerRow = sheet.CreateRow(headerRowIndex);
+
+            headerRow.CreateCell(0).SetCellValue(settings.PropertySetNameColumn);
+            headerRow.CreateCell(1).SetCellValue(settings.PropertyNameColumn);
+            headerRow.CreateCell(2).SetCellValue(settings.DataTypeColumn);
+
+            int rowIndex = headerRowIndex + 1;
+
+            foreach (var set in propertySets)
+            {
+                foreach (var prop in set.PropertyItems)
+                {
+                    var row = sheet.CreateRow(rowIndex++);
+
+                    row.CreateCell(0).SetCellValue(set.PropertySetName);
+                    row.CreateCell(1).SetCellValue(prop.PropertyName);
+                    row.CreateCell(2).SetCellValue(prop.DataType);
+                }
+            }
+
+            using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                workbook.Write(fs);
+            }
+        }
+
         public static List<PicklistGroup> LoadPicklistGroups(string filePath, PicklistSheet settings)
         {
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -139,6 +185,70 @@ namespace IfcManager.BL.Models
                 return groups.Values.ToList();
             }
 
+        }
+
+        public static void SavePicklists(
+    string path,
+    string sheetName,
+    List<PicklistGroup> picklists)
+        {
+            IWorkbook workbook;
+
+            if (File.Exists(path))
+            {
+                using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+                workbook = new XSSFWorkbook(fs);
+            }
+            else
+            {
+                workbook = new XSSFWorkbook();
+            }
+
+            // Remove sheet if exists
+            var existing = workbook.GetSheet(sheetName);
+            if (existing != null)
+            {
+                int index = workbook.GetSheetIndex(existing);
+                workbook.RemoveSheetAt(index);
+            }
+
+            var sheet = workbook.CreateSheet(sheetName);
+
+            // ✅ Header row
+            var header = sheet.CreateRow(0);
+
+            for (int col = 0; col < picklists.Count; col++)
+            {
+                header.CreateCell(col).SetCellValue(picklists[col].GroupName);
+            }
+
+            // ✅ Find max row count
+            int maxRows = picklists.Max(p => p.Values.Count);
+
+            // ✅ Fill rows
+            for (int rowIndex = 0; rowIndex < maxRows; rowIndex++)
+            {
+                var row = sheet.CreateRow(rowIndex + 1);
+
+                for (int col = 0; col < picklists.Count; col++)
+                {
+                    var list = picklists[col];
+                    if (rowIndex < list.Values.Count)
+                    {
+                        row.CreateCell(col).SetCellValue(list.Values[rowIndex]);
+                    }
+                }
+            }
+
+            // ✅ Autosize
+            for (int col = 0; col < picklists.Count; col++)
+            {
+                sheet.AutoSizeColumn(col);
+            }
+
+            // ✅ Save file
+            using var writeFs = new FileStream(path, FileMode.Create, FileAccess.Write);
+            workbook.Write(writeFs);
         }
 
         public static List<LayerMappingItem> ReadLayerMappings(

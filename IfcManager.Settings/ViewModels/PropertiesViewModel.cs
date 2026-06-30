@@ -30,6 +30,19 @@ namespace IfcManager.Settings.ViewModels
         public DelegateCommand<PropertyItemObservable> RemovePropertyCommand { get; }
         public SettingsRoot SettingsRoot { get; }
 
+
+        public DelegateCommand SaveCommand { get; }
+
+        private bool _hasUnsavedChanges;
+        public bool HasUnsavedChanges
+        {
+            get => _hasUnsavedChanges;
+            set => SetProperty(ref _hasUnsavedChanges, value);
+        }
+
+        private readonly string _excelFilePath;
+
+
         public PropertiesViewModel(SettingsRoot settingsRoot)
         {
             SettingsRoot = settingsRoot;
@@ -60,11 +73,64 @@ namespace IfcManager.Settings.ViewModels
                     });
                 }
             }
+
+
+            foreach (var set in PropertySets)
+            {
+                HookSet(set);
+            }
+
+            PropertySets.CollectionChanged += (s, e) => HasUnsavedChanges = true;
+
+
+            SaveCommand = new DelegateCommand(Save).ObservesCanExecute(() => HasUnsavedChanges);
+
         }
+
+        private void HookSet(PropertySetItemObservable set)
+        {
+            set.PropertyChanged += (s, e) => HasUnsavedChanges = true;
+
+            set.Properties.CollectionChanged += (s, e) => HasUnsavedChanges = true;
+
+            foreach (var prop in set.Properties)
+            {
+                prop.PropertyChanged += (s, e) => HasUnsavedChanges = true;
+            }
+        }
+
+
+        private void Save()
+        {
+            string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(SettingsRoot.ExcelSettings.FileLinkSettings);
+
+            ExcelDataLoader.SavePropertySetItems(
+                excelFilePath,
+                SettingsRoot.ExcelSettings.PropertiesSheet,
+                PropertySets.Select(s => new PropertySetItem
+                {
+                    PropertySetName = s.Name,
+                    PropertyItems = s.Properties.Select(p => new PropertyItem
+                    {
+                        PropertyName = p.PropertyName,
+                        DataType = p.DataType
+                    }).ToList()
+                }).ToList()
+            );
+
+            HasUnsavedChanges = false;
+        }
+
+
+        public string[] DataTypes => Constants.DataTypes;
 
         private void AddPropertySet()
         {
-            PropertySets.Add(new PropertySetItemObservable { Name = "NewSet" });
+
+            var set = new PropertySetItemObservable { Name = "NewSet" };
+            HookSet(set);
+            PropertySets.Add(set);
+            HasUnsavedChanges = true;
         }
 
         private void RemovePropertySet(PropertySetItemObservable set)
@@ -74,7 +140,19 @@ namespace IfcManager.Settings.ViewModels
 
         private void AddProperty(PropertySetItemObservable set)
         {
-            set?.Properties.Add(new PropertyItemObservable { PropertyName = "NewProperty", DataType = Constants.DataTypes.FirstOrDefault() });
+
+            if (set == null) return;
+
+            var prop = new PropertyItemObservable
+            {
+                PropertyName = "NewProperty",
+                DataType = Constants.DataTypes.FirstOrDefault()
+            };
+
+            prop.PropertyChanged += (s, e) => HasUnsavedChanges = true;
+
+            set.Properties.Add(prop);
+            HasUnsavedChanges = true;
         }
 
         private void RemoveProperty(PropertyItemObservable item)
