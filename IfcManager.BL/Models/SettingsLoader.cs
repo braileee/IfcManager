@@ -48,7 +48,6 @@ namespace IfcManager.BL.Models
             Properties.Settings.Default.Save();
         }
 
-
         public static string GetDefaultSettingsFilePath()
         {
             string assemblyFolder = AssemblyUtils.GetFolder(typeof(SettingsLoader));

@@ -3,6 +3,8 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using IfcManager.BL.Json;
 using IfcManager.BL.Models;
+using IfcManager.Settings.ViewModels;
+using IfcManager.Settings.Views;
 using RevitIfcManager.Models;
 using RevitIfcManager.Views;
 using System;
@@ -12,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+
 
 namespace RevitIfcManager.RevitApp.Commands
 {
@@ -39,8 +42,10 @@ namespace RevitIfcManager.RevitApp.Commands
                     return Result.Failed;
                 }
 
-                ParametersSettingsView settingsView = new ParametersSettingsView(commandData);
-                settingsView.ShowDialog();
+                IfcManagerSettingsView view = new IfcManagerSettingsView();
+                IfcManagerSettingsViewModel viewModel = new IfcManagerSettingsViewModel();
+                view.DataContext = viewModel;
+                view.ShowDialog();
             }
             catch (Exception ex)
             {

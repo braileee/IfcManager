@@ -2,7 +2,7 @@
       "ExcelSettings": {
             "FileLinkSettings": {
                 "LoadDefault": true,
-                "CustomExcelFilePath": "\\\\COWI.net\\projects\\A295000\\A295617\\10-BIM\\01-4D\\01-Settings\\IFC parameters.xlsx",
+                "CustomExcelFilePath": ""
             },
             "PropertiesSheet": {
                   "HeaderRowIndex": 0,

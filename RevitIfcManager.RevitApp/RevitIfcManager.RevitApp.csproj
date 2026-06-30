@@ -59,6 +59,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\IfcManager.BL\IfcManager.BL.csproj" />
+		<ProjectReference Include="..\IfcManager.Settings\IfcManager.Settings.csproj" />
 		<ProjectReference Include="..\RevitIfcManager.Core\RevitIfcManager.Core.csproj" />
 	</ItemGroup>
 

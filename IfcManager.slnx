@@ -33,6 +33,15 @@
       <Build Solution="InstallerRevit2025|*" Project="false" />
       <Build Solution="InstallerRevit2026|*" Project="false" />
     </Project>
+    <Project Path="IfcManager.Settings/IfcManager.Settings.csproj">
+      <BuildType Solution="DebugStandalone|*" Project="ReleaseRevit2022" />
+      <BuildType Solution="InstallerMS2025|*" Project="DebugRevit2023" />
+      <BuildType Solution="InstallerRevit2023|*" Project="DebugRevit2022" />
+      <BuildType Solution="InstallerRevit2024|*" Project="DebugRevit2022" />
+      <BuildType Solution="InstallerRevit2025|*" Project="DebugRevit2022" />
+      <BuildType Solution="InstallerRevit2026|*" Project="DebugRevit2022" />
+      <BuildType Solution="ReleaseStandalone|*" Project="DebugRevit2022" />
+    </Project>
   </Folder>
   <Folder Name="/Installation/">
     <Project Path="IfcManager.Revit.Setup/RevitIfcManager.Setup.csproj">

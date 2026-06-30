@@ -24,7 +24,11 @@ namespace PSURevitApps.Core
             {
                 if(excludedCategories != null)
                 {
+#if DEBUGREVIT2026
+                    BuiltInCategory builtInCategory = (BuiltInCategory)e.Category.Id.Value;
+#else
                     BuiltInCategory builtInCategory = (BuiltInCategory)e.Category.Id.IntegerValue;
+#endif
 
                     if (excludedCategories.Contains(builtInCategory))
                     {

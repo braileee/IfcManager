@@ -14,5 +14,7 @@ namespace IfcManager.BL
         public const string FilesFolder = "Files";
         public const string ExcelSettingsFileName = "IFC parameters.xlsx";
         public const string JsonSettingsFileName = "Settings.json";
+
+        public static readonly string[] DataTypes = { "string", "int", "double", "bool" };
     }
 }
