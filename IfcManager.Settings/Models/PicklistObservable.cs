@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Media.Animation;
 
 namespace IfcManager.Settings.Models
 {
@@ -27,14 +28,12 @@ namespace IfcManager.Settings.Models
 
                 if (Parent?.Picklists.Any(p => p != this && p.Name == value) == true)
                 {
-                    AddError(nameof(Name), "This picklist name is already used.");
+                    AddError(nameof(Name), $"This picklist name {value} is already used.");
                 }
 
                 SetProperty(ref _name, value);
             }
         }
-
-
 
         public ObservableCollection<PicklistItemObservable> Items { get; }
             = new ObservableCollection<PicklistItemObservable>();
@@ -65,8 +64,24 @@ namespace IfcManager.Settings.Models
                 : null;
         }
 
+        public string GetErrorsInfo(string propertyName)
+        {
+            if (string.IsNullOrEmpty(propertyName))
+                return string.Empty;
+
+            if (_errors.ContainsKey(propertyName))
+            {
+                var errorItem = _errors[propertyName];
+                return string.Join(Environment.NewLine, errorItem);
+            }
+
+            return string.Empty;
+        }
+
         private void AddError(string propertyName, string error)
         {
+            ClearErrors(propertyName);
+
             if (!_errors.ContainsKey(propertyName))
                 _errors[propertyName] = new List<string>();
 

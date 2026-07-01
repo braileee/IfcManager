@@ -5,6 +5,7 @@
 		<OutputType>Library</OutputType>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
+		<XamlDebuggingInformation>True</XamlDebuggingInformation>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='DebugRevit2024' Or '$(Configuration)'=='ReleaseRevit2024' Or '$(Configuration)'=='ReleaseRevit2023' Or '$(Configuration)'=='DebugRevit2023' Or '$(Configuration)'=='DebugRevit2022' Or '$(Configuration)'=='ReleaseRevit2022'">

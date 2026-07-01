@@ -10,7 +10,7 @@
         <Label Content="Settings" Margin="2"/>
 
         <StackPanel Orientation="Horizontal">
-            <TextBox IsEnabled="False" Text="{Binding SettingsFilePath}" 
+            <TextBox IsReadOnly="True" Text="{Binding SettingsFilePath}" 
                      Margin="2" 
                      Width="900"/>
             <Button Content="Load Settings" 
@@ -22,7 +22,7 @@
 
         <Label Content="Source Excel (xlsx)" Margin="2"/>
         <StackPanel Orientation="Horizontal">
-            <TextBox IsEnabled="False" Text="{Binding ExcelFilePath}" 
+            <TextBox IsReadOnly="True" Text="{Binding ExcelFilePath}" 
                      Margin="2" 
                      Width="900"/>
             <Button Content="Load Excel" 

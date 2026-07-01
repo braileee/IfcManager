@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace IfcManager.Settings.ViewModels
 {
@@ -102,23 +103,32 @@ namespace IfcManager.Settings.ViewModels
 
         private void Save()
         {
-            string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(SettingsRoot.ExcelSettings.FileLinkSettings);
+            try
+            {
+                string excelFilePath = ExcelDataLoader.LoadOrPromptExcelFilePath(SettingsRoot.ExcelSettings.FileLinkSettings);
 
-            ExcelDataLoader.SavePropertySetItems(
-                excelFilePath,
-                SettingsRoot.ExcelSettings.PropertiesSheet,
-                PropertySets.Select(s => new PropertySetItem
-                {
-                    PropertySetName = s.Name,
-                    PropertyItems = s.Properties.Select(p => new PropertyItem
+                ExcelDataLoader.SavePropertySetItems(
+                    excelFilePath,
+                    SettingsRoot.ExcelSettings.PropertiesSheet,
+                    PropertySets.Select(s => new PropertySetItem
                     {
-                        PropertyName = p.PropertyName,
-                        DataType = p.DataType
+                        PropertySetName = s.Name,
+                        PropertyItems = s.Properties.Select(p => new PropertyItem
+                        {
+                            PropertyName = p.PropertyName,
+                            DataType = p.DataType
+                        }).ToList()
                     }).ToList()
-                }).ToList()
-            );
+                );
 
-            HasUnsavedChanges = false;
+                HasUnsavedChanges = false;
+
+                MessageBox.Show("Picklists saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("An error occurred while saving the picklists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 
