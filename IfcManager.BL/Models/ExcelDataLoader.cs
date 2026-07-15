@@ -77,6 +77,37 @@ namespace IfcManager.BL.Models
 
         }
 
+        public static List<string> GetPropertyNames(string filePath, PropertiesSheet propertiesSheet)
+        {
+            var propertyNames = new List<string>();
+
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheet(propertiesSheet.SheetName);
+
+                if (sheet == null)
+                    return propertyNames;
+
+                int headerRowIndex = propertiesSheet.HeaderRowIndex;
+                IRow headerRow = sheet.GetRow(headerRowIndex);
+
+                int colName = headerRow.Cells.FindIndex(c => c.StringCellValue == propertiesSheet.PropertyNameColumn);
+
+                for (int i = headerRowIndex + 1; i <= sheet.LastRowNum; i++)
+                {
+                    IRow row = sheet.GetRow(i);
+                    if (row == null) continue;
+
+                    var propertyName = row.GetCell(colName)?.ToString()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(propertyName))
+                        propertyNames.Add(propertyName);
+                }
+            }
+
+            return propertyNames.OrderBy(item => item).ToList();
+        }
+
         public static void SavePropertySetItems(string filePath, PropertiesSheet settings, List<PropertySetItem> propertySets)
         {
             IWorkbook workbook;

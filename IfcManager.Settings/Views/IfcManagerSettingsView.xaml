@@ -20,5 +20,13 @@
         <TabItem Header="Picklists">
             <local:PicklistView DataContext="{Binding PicklistViewModel}"/>
         </TabItem>
+
+        <TabItem Header="Exact Matches">
+            <local:ExactMatchesView DataContext="{Binding ExactMatchesViewModel}"/>
+        </TabItem>
+
+        <TabItem Header="Matches">
+            <local:MatchesView DataContext="{Binding MatchesViewModel}"/>
+        </TabItem>
     </TabControl>
 </Window>

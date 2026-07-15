@@ -16,11 +16,15 @@ namespace IfcManager.Settings.ViewModels
             PathsViewModel = new PathsViewModel();
             PropertiesViewModel = new PropertiesViewModel(Settings);
             PicklistViewModel = new PicklistViewModel(Settings);
+            ExactMatchesViewModel = new ExactMatchesViewModel(Settings);
+            MatchesViewModel = new MatchesViewModel(Settings);
         }
 
         public SettingsRoot Settings { get; }
         public PathsViewModel PathsViewModel { get; set; }
         public PropertiesViewModel PropertiesViewModel { get; set; }
         public PicklistViewModel PicklistViewModel { get; set; }
+        public ExactMatchesViewModel ExactMatchesViewModel { get; set; }
+        public MatchesViewModel MatchesViewModel { get; }
     }
 }
