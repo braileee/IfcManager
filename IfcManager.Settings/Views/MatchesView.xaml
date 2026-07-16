@@ -28,7 +28,7 @@
 
         <!-- Match Tables -->
 
-        <TabControl ItemsSource="{Binding MatchTables}">
+        <TabControl ItemsSource="{Binding MatchTables}" x:Name="MatchTablesTabControl">
 
             <!-- Tab Header -->
             <TabControl.ItemTemplate>
@@ -70,7 +70,7 @@
                                     Margin="20,0,0,0"
                                     Width="120"
                                     Command="{Binding DataContext.RemoveMatchTableCommand,
-                                                      RelativeSource={RelativeSource AncestorType=TabControl}}"
+                                                      ElementName=MatchTablesTabControl}"
                                     CommandParameter="{Binding}" />
 
                         </StackPanel>
@@ -130,7 +130,7 @@
                                                             Margin="0,2,2,2"
                                                             Content="X"
                                                             Command="{Binding DataContext.RemoveSourcePropertyCommand,
-                                                                               RelativeSource={RelativeSource AncestorType=ContentPresenter}}"
+                                                                               RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}" />
 
                                                 </StackPanel>

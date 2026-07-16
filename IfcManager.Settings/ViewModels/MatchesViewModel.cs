@@ -204,15 +204,20 @@ namespace IfcManager.Settings.ViewModels
 
         private void AddMatchTable()
         {
-            MatchTables.Add(
-                new MatchTableViewModel(
+            MatchTableViewModel matchTableViewModel = new(
                     MarkDirty)
-                {
-                    SheetPrefix =
-                        $"New Match {MatchTables.Count + 1}",
+            {
+                SheetPrefix = $"New Match {MatchTables.Count + 1}",
+                AvailableProperties = new ObservableCollection<string>(AvailableProperties),
+            };
 
-                    AvailableProperties = new ObservableCollection<string>(AvailableProperties)
-                });
+            matchTableViewModel.TargetProperty = AvailableProperties.FirstOrDefault();
+            matchTableViewModel.SourceProperties.Add(new MatchPropertyViewModel(MarkDirty, AvailableProperties.FirstOrDefault())
+            {
+                AvailableProperties = new ObservableCollection<string>(AvailableProperties),
+            });
+
+            MatchTables.Add(matchTableViewModel);
 
             MarkDirty();
         }
