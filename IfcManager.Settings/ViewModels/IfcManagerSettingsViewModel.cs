@@ -1,5 +1,6 @@
 ﻿using IfcManager.BL.Json;
 using IfcManager.BL.Models;
+using MyApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace IfcManager.Settings.ViewModels
             PicklistViewModel = new PicklistViewModel(Settings);
             ExactMatchesViewModel = new ExactMatchesViewModel(Settings);
             MatchesViewModel = new MatchesViewModel(Settings);
+            ExpressionEditorViewModel = new ExpressionEditorViewModel(Settings);
         }
 
         public SettingsRoot Settings { get; }
@@ -26,5 +28,6 @@ namespace IfcManager.Settings.ViewModels
         public PicklistViewModel PicklistViewModel { get; set; }
         public ExactMatchesViewModel ExactMatchesViewModel { get; set; }
         public MatchesViewModel MatchesViewModel { get; }
+        public ExpressionEditorViewModel ExpressionEditorViewModel { get; }
     }
 }

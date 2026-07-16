@@ -207,7 +207,7 @@ namespace RevitIfcManager.ViewModels
 
         public UIApplication Uiapp { get; }
         public List<PropertyValueMatch> PropertyValueMatches { get; } = new List<PropertyValueMatch>();
-        public List<ExpressionItem> Expressions { get; private set; } = new List<ExpressionItem>();
+        public List<ExpressionRule> Expressions { get; private set; } = new List<ExpressionRule>();
         public List<ComposedPropertyItem> ComposedItems { get; } = new List<ComposedPropertyItem>();
         public List<PropertyValueMatch> PropertyValueExactMatches { get; } = new List<PropertyValueMatch>();
         public List<PropertyItem> CustomProperties { get; } = new List<PropertyItem>();

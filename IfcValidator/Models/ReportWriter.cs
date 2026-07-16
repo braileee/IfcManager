@@ -13,7 +13,7 @@ namespace IfcValidator.Models
 {
     public class ReportWriter
     {
-        public ReportWriter(List<IfcFile> ifcFiles, string reportFilePath, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<PropertyValueMatch> propertyValueMatches, List<ExpressionItem> expressions, List<LayerMappingItem> layerMappingItems, List<ComposedPropertyItem> composedPropertyItems, List<PropertyValueMatch> exactPropertyValueMatches)
+        public ReportWriter(List<IfcFile> ifcFiles, string reportFilePath, List<PropertySetItem> propertySetItems, List<PicklistGroup> picklistGroups, List<PropertyValueMatch> propertyValueMatches, List<ExpressionRule> expressions, List<LayerMappingItem> layerMappingItems, List<ComposedPropertyItem> composedPropertyItems, List<PropertyValueMatch> exactPropertyValueMatches)
         {
             IfcFiles = ifcFiles;
             ReportFilePath = reportFilePath;
@@ -31,7 +31,7 @@ namespace IfcValidator.Models
         public List<PropertySetItem> PropertySetItems { get; } = new List<PropertySetItem>();
         public List<PicklistGroup> PicklistGroups { get; } = new List<PicklistGroup>();
         public List<PropertyValueMatch> PropertyValueMatches { get; } = new List<PropertyValueMatch>();
-        public List<ExpressionItem> Expressions { get; } = new List<ExpressionItem>();
+        public List<ExpressionRule> Expressions { get; } = new List<ExpressionRule>();
         public List<LayerMappingItem> LayerMappingItems { get; }
         public List<ComposedPropertyItem> ComposedPropertyItems { get; }
         public List<PropertyValueMatch> ExactPropertyValueMatches { get; }

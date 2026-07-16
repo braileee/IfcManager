@@ -13,7 +13,7 @@ namespace RevitIfcManager.Models
     {
         public List<PropertyField> ChangedFields { get; set; } = new List<PropertyField>();
         public List<Element> Elements { get; set; } = new List<Element>();
-        public List<ExpressionItem> Expressions { get; set; } = new List<ExpressionItem>();
+        public List<ExpressionRule> Expressions { get; set; } = new List<ExpressionRule>();
         public ObservableCollection<PropertyField> Fields { get; internal set; } = new ObservableCollection<PropertyField>();
         public List<ComposedPropertyItem> ComposedItems { get; set; } = new List<ComposedPropertyItem>();
         public List<PropertyValueMatch> PropertyValueExactMatches { get; set; } = new List<PropertyValueMatch>();

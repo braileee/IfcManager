@@ -68,7 +68,7 @@ namespace IfcValidator.ViewModels
                 List<PropertySetItem> propertySetItems = ExcelDataLoader.LoadPropertySetItems(ExcelFilePath, settingsRoot.ExcelSettings.PropertiesSheet);
                 List<PicklistGroup> picklistGroups = ExcelDataLoader.LoadPicklistGroups(excelFilePath, settingsRoot.ExcelSettings.PicklistSheet);
                 List<PropertyValueMatch> propertyValueMatches = ExcelDataLoader.LoadPropertiesValueMatches(excelFilePath, settingsRoot.ExcelSettings.PropertyMatchSheet);
-                List<ExpressionItem> expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings.ExpressionSheet);
+                List<ExpressionRule> expressions = ExcelDataLoader.LoadExpressions(excelFilePath, settingsRoot.ExcelSettings.ExpressionSheet);
                 List<LayerMappingItem> layerMappingItems = ExcelDataLoader.ReadLayerMappings(excelFilePath, settingsRoot.ExcelSettings.LayersMappingSheet);
                 List<ComposedPropertyItem> composedPropertyItems = ExcelDataLoader.LoadComposed(excelFilePath, settingsRoot.ExcelSettings.ComposedSheet);
                 List<PropertyValueMatch> exactPropertyValueMatches = ExcelDataLoader.LoadPropertiesExactValueMatches(excelFilePath, settingsRoot.ExcelSettings.PropertyExactMatchSheet);

@@ -1,5 +1,6 @@
 ﻿using IfcManager.BL.Enums;
 using IfcManager.BL.Json;
+using IfcManager.Core.Utils;
 using IfcManager.Models;
 using IfcManager.Utils;
 using NPOI.SS.UserModel;
@@ -448,48 +449,90 @@ namespace IfcManager.BL.Models
             return excelFilePath;
         }
 
-        public static List<ExpressionItem> LoadExpressions(string excelFilePath, ExpressionSheet setting)
+        public static List<ExpressionRule> LoadExpressions(string filePath, ExpressionSheet settings)
         {
-            var expressions = new List<ExpressionItem>();
-            using (var fs = new FileStream(excelFilePath, FileMode.Open, FileAccess.Read))
+            var result = new List<ExpressionRule>();
+
+            if (!File.Exists(filePath))
+                return result;
+
+            using var stream = File.OpenRead(filePath);
+
+            IWorkbook workbook = new XSSFWorkbook(stream);
+
+            var sheet = workbook.GetSheet(settings.SheetName);
+
+            if (sheet == null)
+                return result;
+
+            for (int rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++)
             {
-                IWorkbook workbook = new XSSFWorkbook(fs);
-                ISheet sheet = workbook.GetSheet(setting.SheetName);
-                if (sheet == null)
-                    return expressions;
-                // Assuming first row is header
-                int headerRowIndex = setting.HeaderRowIndex;
-                IRow headerRow = sheet.GetRow(headerRowIndex);
-                int colSourceProperty = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.SourcePropertyColumnName);
-                int colTargetProperty = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.TargetPropertyColumnName);
-                int colFunctionType = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.FunctionColumnName);
-                int colValue = headerRow.Cells.FindIndex(c => c.StringCellValue == setting.ValueColumnName);
-                for (int i = headerRowIndex + 1; i <= sheet.LastRowNum; i++)
+                var row = sheet.GetRow(rowIndex);
+
+                if (row == null)
+                    continue;
+
+                result.Add(new ExpressionRule
                 {
-                    IRow row = sheet.GetRow(i);
-                    if (row == null) continue;
-                    string sourcePropertyName = row.GetCell(colSourceProperty)?.ToString()?.Trim();
-                    string targetPropertyName = row.GetCell(colTargetProperty)?.ToString()?.Trim();
-                    string functionTypeStr = row.GetCell(colFunctionType)?.ToString()?.Trim();
-                    string value = row.GetCell(colValue)?.ToString()?.Trim();
-                    if (string.IsNullOrWhiteSpace(sourcePropertyName) || string.IsNullOrWhiteSpace(targetPropertyName))
-                        continue;
-                    ExpressionFunctionType functionType;
-                    if (!Enum.TryParse(functionTypeStr, out functionType))
-                    {
-                        functionType = ExpressionFunctionType.Undefined;
-                    }
-                    expressions.Add(new ExpressionItem
-                    {
-                        SourcePropertyName = sourcePropertyName,
-                        TargetPropertyName = targetPropertyName,
-                        ExpressionFunctionType = functionType,
-                        Value = value
-                    });
+                    SourcePropertyName = row.GetCell(0)?.ToString() ?? string.Empty,
+                    Function = row.GetCell(1)?.ToString() ?? string.Empty,
+                    TargetPropertyName = row.GetCell(2)?.ToString() ?? string.Empty
+                });
+            }
+
+            return result;
+        }
+
+        public static void SaveRules(string filePath, ExpressionSheet settings, IEnumerable<ExpressionRule> rules)
+        {
+            IWorkbook workbook = XSSFWorkbookUtils.OpenExcelFile(filePath, FileAccess.ReadWrite);
+
+            var sheet = workbook.GetSheet(settings.SheetName)
+                        ?? workbook.CreateSheet(settings.SheetName);
+
+            // Clear existing data
+            for (int i = sheet.LastRowNum; i >= 0; i--)
+            {
+                var row = sheet.GetRow(i);
+
+                if (row != null)
+                {
+                    sheet.RemoveRow(row);
                 }
             }
-            return expressions;
+
+            // Header
+            var headerRow = sheet.CreateRow(0);
+
+            headerRow.CreateCell(0).SetCellValue("Source Property Name");
+            headerRow.CreateCell(1).SetCellValue("Function");
+            headerRow.CreateCell(2).SetCellValue("Target Property Name");
+
+            int rowIndex = 1;
+
+            // Data
+            foreach (var rule in rules)
+            {
+                var row = sheet.CreateRow(rowIndex++);
+
+                row.CreateCell(0).SetCellValue(rule.SourcePropertyName);
+                row.CreateCell(1).SetCellValue(rule.Function);
+                row.CreateCell(2).SetCellValue(rule.TargetPropertyName);
+            }
+
+            sheet.AutoSizeColumn(0);
+            sheet.AutoSizeColumn(1);
+            sheet.AutoSizeColumn(2);
+
+            using (var fs = new FileStream(
+                filePath,
+                FileMode.Create,
+                FileAccess.Write))
+            {
+                workbook.Write(fs);
+            }
         }
+
 
         public static List<ComposedPropertyItem> LoadComposed(string excelFilePath, ComposedSheet settings)
         {

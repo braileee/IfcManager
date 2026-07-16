@@ -1,4 +1,5 @@
 ﻿using IfcManager.BL.Enums;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,40 +10,23 @@ namespace IfcManager.BL.Models
 {
     public class ExpressionEvaluator
     {
-        public static object Evaluate(ExpressionItem expression, object sourceParameterValue)
+        public static object Evaluate(
+        string sourceValue,
+        string expression)
         {
-            switch (expression.ExpressionFunctionType)
-            {
-                case ExpressionFunctionType.Undefined:
-                    break;
-                case ExpressionFunctionType.DelimetedByDotFirstPart:
-                    if (sourceParameterValue is string strValue)
-                    {
-                        if (string.IsNullOrEmpty(strValue))
-                        {
-                            return strValue;
-                        }
+            if (string.IsNullOrWhiteSpace(expression))
+                return sourceValue;
 
-                        var parts = strValue.Split('.');
+            string escapedValue = sourceValue
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"");
 
-                        if (parts.Length > 0)
-                        {
-                            return parts[0];
-                        }
-                    }
-                    break;
-                case ExpressionFunctionType.SetTrueIfSourceEqualsTo:
-                    if (sourceParameterValue == null)
-                    {
-                        return string.Empty;
-                    }
+            string code = $@"
+                        var value = ""{escapedValue}"";
+                        return value{expression};
+                        ";
 
-                    return sourceParameterValue.ToString() == expression.Value;
-                default:
-                    break;
-            }
-
-            return string.Empty;
+            return CSharpScript.EvaluateAsync<object>(code);
         }
     }
 }

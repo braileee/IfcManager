@@ -28,5 +28,9 @@
         <TabItem Header="Matches">
             <local:MatchesView DataContext="{Binding MatchesViewModel}"/>
         </TabItem>
+        
+        <TabItem Header="Expressions">
+            <local:ExpressionEditorView DataContext="{Binding ExpressionEditorViewModel}"/>
+        </TabItem>
     </TabControl>
 </Window>

@@ -157,7 +157,7 @@ namespace RevitIfcManager.EventHandlers
                     continue;
                 }
 
-                List<ExpressionItem> relatedExpressions = options.Expressions.Where(item => item.SourcePropertyName == changedField.Name).ToList();
+                List<ExpressionRule> relatedExpressions = options.Expressions.Where(item => item.SourcePropertyName == changedField.Name).ToList();
 
                 foreach (Element element in options.Elements)
                 {
@@ -174,7 +174,7 @@ namespace RevitIfcManager.EventHandlers
                         {
                             object value = element.LookupParameter(changedField.Name)?.GetValueAsObject();
 
-                            targetField.Value = ExpressionEvaluator.Evaluate(expression, value);
+                            targetField.Value = ExpressionEvaluator.Evaluate(value.ToString(), expression.Function);
                             targetField.CanBeEdited = false;
                             targetField.IsReadOnly = true;
 

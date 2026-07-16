@@ -295,7 +295,7 @@ namespace IfcValidator.Models
             return updatedFiles;
         }
 
-        public List<IfcFile> GetWrongExpressions(List<IfcFile> ifcFiles, List<ExpressionItem> expressions)
+        public List<IfcFile> GetWrongExpressions(List<IfcFile> ifcFiles, List<ExpressionRule> expressions)
         {
             List<IfcFile> updatedFiles = new List<IfcFile>();
 
@@ -322,9 +322,9 @@ namespace IfcValidator.Models
                     {
                         string assignedSourceValue = sourceProperty?.Value?.ToString();
 
-                        List<ExpressionItem> expressionItems = expressions.Where(expression => expression.SourcePropertyName == sourceProperty.PropertyName).ToList();
+                        List<ExpressionRule> expressionItems = expressions.Where(expression => expression.SourcePropertyName == sourceProperty.PropertyName).ToList();
 
-                        foreach (ExpressionItem expression in expressionItems)
+                        foreach (ExpressionRule expression in expressionItems)
                         {
                             IfcProperty targetProperty = ifcElement.IfcProperties.FirstOrDefault(item => item.PropertyName == expression.TargetPropertyName);
 
