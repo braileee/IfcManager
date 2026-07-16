@@ -33,7 +33,7 @@ namespace MyApp.ViewModels
 
         public DelegateCommand SaveCommand { get; }
         public string ExcelFilePath { get; }
-        public SettingsRoot SettingsRoot { get; }
+        public SettingsRoot SettingsRoot { get; set; }
 
         public ExpressionEditorViewModel(SettingsRoot settingsRoot)
         {

@@ -32,5 +32,9 @@
         <TabItem Header="Expressions">
             <local:ExpressionEditorView DataContext="{Binding ExpressionEditorViewModel}"/>
         </TabItem>
+        
+        <TabItem Header="Composed Properties">
+            <local:ComposedView DataContext="{Binding ComposedViewModel}"/>
+        </TabItem>
     </TabControl>
 </Window>

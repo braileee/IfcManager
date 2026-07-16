@@ -20,6 +20,7 @@ namespace IfcManager.Settings.ViewModels
             ExactMatchesViewModel = new ExactMatchesViewModel(Settings);
             MatchesViewModel = new MatchesViewModel(Settings);
             ExpressionEditorViewModel = new ExpressionEditorViewModel(Settings);
+            ComposedViewModel = new ComposedViewModel(Settings);
         }
 
         public SettingsRoot Settings { get; }
@@ -29,5 +30,6 @@ namespace IfcManager.Settings.ViewModels
         public ExactMatchesViewModel ExactMatchesViewModel { get; set; }
         public MatchesViewModel MatchesViewModel { get; }
         public ExpressionEditorViewModel ExpressionEditorViewModel { get; }
+        public ComposedViewModel ComposedViewModel { get; }
     }
 }

@@ -578,6 +578,48 @@ namespace IfcManager.BL.Models
             return composedItems;
         }
 
+        public static void SaveComposed(
+       string filePath,  ComposedSheet settings,
+       IEnumerable<ComposedPropertyItem> properties)
+        {
+            XSSFWorkbook workbook;
+
+            using (var read = File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                workbook = new XSSFWorkbook(read);
+            }
+
+            var sheet = workbook.GetSheet(settings.SheetName);
+
+            while (sheet.LastRowNum > 0)
+            {
+                sheet.RemoveRow(sheet.GetRow(sheet.LastRowNum));
+                sheet.ShiftRows(
+                    sheet.LastRowNum,
+                    sheet.LastRowNum,
+                    -1);
+            }
+
+            var header = sheet.GetRow(0) ?? sheet.CreateRow(0);
+
+            header.CreateCell(0).SetCellValue(settings.ComposedPropertyColumnName);
+            header.CreateCell(1).SetCellValue(settings.FormulaColumnName);
+
+            int rowIndex = 1;
+
+            foreach (var item in properties)
+            {
+                var row = sheet.CreateRow(rowIndex++);
+
+                row.CreateCell(0).SetCellValue(item.ComposedPropertyName);
+                row.CreateCell(1).SetCellValue(item.Formula);
+            }
+
+            using var write = File.Create(filePath);
+
+            workbook.Write(write);
+        }
+
         public static List<PropertyValueMatch> LoadPropertiesExactValueMatches(string filePath, PropertyExactMatchSheet settings)
         {
             List<PropertyValueMatch> propertyValueMatches = new List<PropertyValueMatch>();
